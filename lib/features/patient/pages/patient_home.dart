@@ -1,7 +1,11 @@
 import 'package:chronocancer_ai/features/doctor/pages/analytics_dashboard_page.dart';
+//import 'package:chronocancer_ai/features/doctor/pages/patient_detail_page.dart';
+import 'package:chronocancer_ai/features/patient/pages/family_page.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:chronocancer_ai/features/patient/pages/doctor_list_page.dart';
+import 'package:chronocancer_ai/features/patient/pages/profile_setup_page.dart';
 
 void main() {
   runApp(const HomePage());
@@ -59,12 +63,12 @@ class _ChronoCancerHomePageState extends State<ChronoCancerHomePage> {
       body: PageView(
         controller: _pageController,
         physics: const NeverScrollableScrollPhysics(),
-        children: const [
+        children: [
           HomePageContent(),
           HealthAnalyticsScreen(),
-          FamilyPage(),
-          MePage(),
-          DoctorPage(),
+          CommunityInsightsApp(),
+          PatientDetailPage(),
+          DoctorsListScreen(),
         ],
       ),
       bottomNavigationBar: _buildBottomNavigationBar(),
@@ -792,30 +796,3 @@ class HomePageContent extends StatelessWidget {
 
 // -------------------- Placeholder Pages --------------------
 
-
-class FamilyPage extends StatelessWidget {
-  const FamilyPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text('Family Page'));
-  }
-}
-
-class MePage extends StatelessWidget {
-  const MePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text('Me Page'));
-  }
-}
-
-class DoctorPage extends StatelessWidget {
-  const DoctorPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text('Doctor Page'));
-  }
-}

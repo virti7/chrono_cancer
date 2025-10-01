@@ -1,3 +1,7 @@
+import 'package:chronocancer_ai/features/patient/pages/cancer_awareness_page.dart';
+//import 'package:chronocancer_ai/features/patient/pages/doctor_list_page.dart';
+import 'package:chronocancer_ai/features/patient/pages/family_page.dart';
+import 'package:chronocancer_ai/features/patient/pages/health_monitoring_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:chronocancer_ai/features/auth/pages/consent_page.dart';
 import 'package:chronocancer_ai/features/auth/pages/onboarding2_page.dart';
@@ -67,6 +71,11 @@ class MyApp extends StatelessWidget {
         '/prescription':(context) => const PrescriptionPage(),
         '/riskQueue':(context) => const RiskQueueScreen(),
         '/teleConsult':(context) => const TeleconsultPage(),
+        '/cancerAwareness':(context) => const CancerAwarenessPage(),
+        '/healthMonitoring':(context) => const HealthMonitoringPage(),
+        '/patientProfile':(context) => const PatientDetailPage(),
+        '/family':(context) => const CommunityInsightsApp(),
+        //'/doctorsList':(context) => const DoctorDetailsPage(doctor: doctor)
       }
     );
   }

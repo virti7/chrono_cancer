@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'signup_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -10,6 +12,12 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  bool _isLoading = false;
+
   void _navigateBasedOnRole() {
     String route = '/';
 
@@ -30,6 +38,56 @@ class _LoginPageState extends State<LoginPage> {
 
     Navigator.pushReplacementNamed(context, route);
   }
+
+Future<void> _login() async {
+  setState(() {
+    _isLoading = true;
+  });
+
+  try {
+    UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+      email: _emailController.text.trim(),
+      password: _passwordController.text.trim(),
+    );
+
+    if (userCredential.user != null) {
+      // Save role in Firestore
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .set({
+        'email': _emailController.text.trim(),
+        'uid': userCredential.user!.uid,
+        'role': widget.role, // save role selected previously
+      }, SetOptions(merge: true));
+
+      // Navigate based on role
+      _navigateBasedOnRole();
+    }
+  } on FirebaseAuthException catch (e) {
+    String message = 'Login failed. Please try again.';
+    if (e.code == 'user-not-found') {
+      message = 'No user found for that email.';
+    } else if (e.code == 'wrong-password') {
+      message = 'Incorrect password.';
+    } else if (e.code == 'invalid-email') {
+      message = 'Invalid email address.';
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('An unexpected error occurred.')),
+    );
+  } finally {
+    setState(() {
+      _isLoading = false;
+    });
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -96,6 +154,7 @@ class _LoginPageState extends State<LoginPage> {
 
                       // Email Field
                       TextField(
+                        controller: _emailController,
                         decoration: InputDecoration(
                           hintText: 'Email Address',
                           hintStyle: const TextStyle(color: Colors.grey),
@@ -118,6 +177,7 @@ class _LoginPageState extends State<LoginPage> {
 
                       // Password Field
                       TextField(
+                        controller: _passwordController,
                         obscureText: true,
                         decoration: InputDecoration(
                           hintText: 'Enter your password',
@@ -143,7 +203,7 @@ class _LoginPageState extends State<LoginPage> {
                       SizedBox(
                         height: 50,
                         child: ElevatedButton(
-                          onPressed: _navigateBasedOnRole,
+                          onPressed: _isLoading ? null : _login,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.black,
                             shape: RoundedRectangleBorder(
@@ -151,14 +211,17 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             elevation: 0,
                           ),
-                          child: const Text(
-                            'Log In',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
+                          child: _isLoading
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white)
+                              : const Text(
+                                  'Log In',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
                         ),
                       ),
                       const SizedBox(height: 25),
@@ -169,8 +232,8 @@ class _LoginPageState extends State<LoginPage> {
                         children: <Widget>[
                           const Text(
                             'Don\'t have an account? ',
-                            style: TextStyle(
-                                color: Colors.black54, fontSize: 15),
+                            style:
+                                TextStyle(color: Colors.black54, fontSize: 15),
                           ),
                           GestureDetector(
                             onTap: () {

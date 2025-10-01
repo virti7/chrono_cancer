@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "370151178669",
+    "project_id": "chronocancerai",
+    "storage_bucket": "chronocancerai.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:370151178669:android:e7de6f7ea06c89a259a124",
+        "android_client_info": {
+          "package_name": "com.example.chronocancer_ai"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtFg_dh6aZFUuV0t-srsvb0RfGHdy3X2w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

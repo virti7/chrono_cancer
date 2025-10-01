@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:chronocancer_ai/features/auth/pages/consent_page.dart';
 import 'package:chronocancer_ai/features/auth/pages/onboarding2_page.dart';
 import 'package:chronocancer_ai/features/auth/pages/onboarding3_page.dart';
@@ -21,9 +22,15 @@ import 'package:chronocancer_ai/features/worker/pages/patient_queue_page.dart';
 import 'package:chronocancer_ai/features/worker/pages/report_upload_page.dart';
 import 'package:chronocancer_ai/features/worker/pages/training_hub_page.dart';
 import 'package:chronocancer_ai/features/worker/pages/worker_home.dart';
+import 'package:chronocancer_ai/firebase_options.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform
+  );
   runApp(const MyApp());
 }
 

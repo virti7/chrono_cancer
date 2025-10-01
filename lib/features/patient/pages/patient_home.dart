@@ -1,3 +1,4 @@
+import 'package:chronocancer_ai/features/doctor/pages/analytics_dashboard_page.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:dotted_border/dotted_border.dart';
@@ -31,6 +32,87 @@ class ChronoCancerHomePage extends StatefulWidget {
 }
 
 class _ChronoCancerHomePageState extends State<ChronoCancerHomePage> {
+  int _currentIndex = 0;
+  final PageController _pageController = PageController();
+
+  void _onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+      _pageController.animateToPage(
+        index,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey[100],
+      body: PageView(
+        controller: _pageController,
+        physics: const NeverScrollableScrollPhysics(),
+        children: const [
+          HomePageContent(),
+          HealthAnalyticsScreen(),
+          FamilyPage(),
+          MePage(),
+          DoctorPage(),
+        ],
+      ),
+      bottomNavigationBar: _buildBottomNavigationBar(),
+    );
+  }
+
+  BottomNavigationBar _buildBottomNavigationBar() {
+    return BottomNavigationBar(
+      type: BottomNavigationBarType.fixed,
+      selectedItemColor: Colors.deepPurple,
+      unselectedItemColor: Colors.grey,
+      showUnselectedLabels: true,
+      selectedLabelStyle: const TextStyle(fontSize: 12),
+      unselectedLabelStyle: const TextStyle(fontSize: 12),
+      currentIndex: _currentIndex,
+      onTap: _onTabTapped,
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home_outlined),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.analytics_outlined),
+          label: 'Analytics',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.favorite_border),
+          label: 'Family',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person_outline),
+          label: 'Me',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.family_restroom_outlined),
+          label: 'Doctor',
+        ),
+      ],
+    );
+  }
+}
+
+// -------------------- Pages --------------------
+
+// Keep your original home page content
+class HomePageContent extends StatelessWidget {
+  const HomePageContent({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -100,7 +182,6 @@ class _ChronoCancerHomePageState extends State<ChronoCancerHomePage> {
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
 
@@ -127,35 +208,40 @@ class _ChronoCancerHomePageState extends State<ChronoCancerHomePage> {
         Expanded(
           child: AspectRatio(
             aspectRatio: 1,
-            child: _buildChip(Icons.calendar_today, 'Reminders', Colors.purple[100]!, Colors.purple),
+            child: _buildChip(Icons.calendar_today, 'Reminders',
+                Colors.purple[100]!, Colors.purple),
           ),
         ),
         const SizedBox(width: 8),
         Expanded(
           child: AspectRatio(
             aspectRatio: 1,
-            child: _buildChip(Icons.medical_services_outlined, 'Apps', Colors.orange[100]!, Colors.orange),
+            child: _buildChip(Icons.medical_services_outlined, 'Apps',
+                Colors.orange[100]!, Colors.orange),
           ),
         ),
         const SizedBox(width: 8),
         Expanded(
           child: AspectRatio(
             aspectRatio: 1,
-            child: _buildChip(Icons.cloud_upload_outlined, 'Upload', Colors.blue[100]!, Colors.blue),
+            child: _buildChip(Icons.cloud_upload_outlined, 'Upload',
+                Colors.blue[100]!, Colors.blue),
           ),
         ),
         const SizedBox(width: 8),
         Expanded(
           child: AspectRatio(
             aspectRatio: 1,
-            child: _buildChip(Icons.calendar_month, 'Appointments', Colors.pink[100]!, Colors.pink),
+            child: _buildChip(Icons.calendar_month, 'Appointments',
+                Colors.pink[100]!, Colors.pink),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildChip(IconData icon, String text, Color bgColor, Color iconColor) {
+  Widget _buildChip(
+      IconData icon, String text, Color bgColor, Color iconColor) {
     return Container(
       decoration: BoxDecoration(
         color: bgColor,
@@ -199,7 +285,10 @@ class _ChronoCancerHomePageState extends State<ChronoCancerHomePage> {
               children: [
                 Text(
                   'Blood Pressure Check Due',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.orange[800]),
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.orange[800]),
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -214,9 +303,11 @@ class _ChronoCancerHomePageState extends State<ChronoCancerHomePage> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 10),
                   ),
-                  child: const Text('Schedule Check', style: TextStyle(color: Colors.white)),
+                  child: const Text('Schedule Check',
+                      style: TextStyle(color: Colors.white)),
                 ),
               ],
             ),
@@ -239,7 +330,8 @@ class _ChronoCancerHomePageState extends State<ChronoCancerHomePage> {
             ),
             TextButton(
               onPressed: () {},
-              child: const Text('See all', style: TextStyle(color: Colors.deepPurple)),
+              child: const Text('See all',
+                  style: TextStyle(color: Colors.deepPurple)),
             ),
           ],
         ),
@@ -249,9 +341,12 @@ class _ChronoCancerHomePageState extends State<ChronoCancerHomePage> {
           child: ListView(
             scrollDirection: Axis.horizontal,
             children: [
-              _buildCancerTypeCard('BRAIN CANCER', 'assets/images/transparent_brain_cancer.png'),
-              _buildCancerTypeCard('LIVER CANCER', 'assets/images/transparent_brain_cancer.png'),
-              _buildCancerTypeCard('PROSTATE CANCER', 'assets/images/transparent_brain_cancer.png'),
+              _buildCancerTypeCard(
+                  'BRAIN CANCER', 'assets/images/transparent_brain_cancer.png'),
+              _buildCancerTypeCard(
+                  'LIVER CANCER', 'assets/images/transparent_brain_cancer.png'),
+              _buildCancerTypeCard('PROSTATE CANCER',
+                  'assets/images/transparent_brain_cancer.png'),
             ],
           ),
         ),
@@ -322,7 +417,8 @@ class _ChronoCancerHomePageState extends State<ChronoCancerHomePage> {
                         children: const [
                           Text(
                             '78',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 24),
                           ),
                           Text(
                             '%',
@@ -342,14 +438,17 @@ class _ChronoCancerHomePageState extends State<ChronoCancerHomePage> {
                         children: [
                           const Text(
                             'Health Harmony',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 8),
                           Row(
                             children: [
-                              const Icon(Icons.circle, color: Colors.amber, size: 12),
+                              const Icon(Icons.circle,
+                                  color: Colors.amber, size: 12),
                               const SizedBox(width: 4),
-                              Text('Good', style: TextStyle(color: Colors.grey[700])),
+                              Text('Good',
+                                  style: TextStyle(color: Colors.grey[700])),
                             ],
                           ),
                         ],
@@ -377,7 +476,8 @@ class _ChronoCancerHomePageState extends State<ChronoCancerHomePage> {
                   children: [
                     const Text(
                       'Live Health Monitoring',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 12),
                     Row(
@@ -400,7 +500,8 @@ class _ChronoCancerHomePageState extends State<ChronoCancerHomePage> {
                           ),
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
-                        child: const Text('Connect Smart Device', style: TextStyle(color: Colors.white)),
+                        child: const Text('Connect Smart Device',
+                            style: TextStyle(color: Colors.white)),
                       ),
                     ),
                   ],
@@ -455,7 +556,8 @@ class _ChronoCancerHomePageState extends State<ChronoCancerHomePage> {
             ),
             TextButton(
               onPressed: () {},
-              child: const Text('See all', style: TextStyle(color: Colors.deepPurple)),
+              child: const Text('See all',
+                  style: TextStyle(color: Colors.deepPurple)),
             ),
           ],
         ),
@@ -465,9 +567,12 @@ class _ChronoCancerHomePageState extends State<ChronoCancerHomePage> {
           child: ListView(
             scrollDirection: Axis.horizontal,
             children: [
-              _buildDoctorCard('Dr. Marcus MD.', 'Cardiologist', 'assets/images/transparent_brain_cancer.png'),
-              _buildDoctorCard('Dr. Maria Elena', 'Pediatrician', 'assets/images/transparent_brain_cancer.png'),
-              _buildDoctorCard('Dr. Stevi Jossi', 'Generalist', 'assets/images/transparent_brain_cancer.png'),
+              _buildDoctorCard('Dr. Marcus MD.', 'Cardiologist',
+                  'assets/images/transparent_brain_cancer.png'),
+              _buildDoctorCard('Dr. Maria Elena', 'Pediatrician',
+                  'assets/images/transparent_brain_cancer.png'),
+              _buildDoctorCard('Dr. Stevi Jossi', 'Generalist',
+                  'assets/images/transparent_brain_cancer.png'),
             ],
           ),
         ),
@@ -502,7 +607,8 @@ class _ChronoCancerHomePageState extends State<ChronoCancerHomePage> {
           Text(
             name,
             textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+            style:
+                const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
           ),
           Text(
             specialty,
@@ -539,17 +645,22 @@ class _ChronoCancerHomePageState extends State<ChronoCancerHomePage> {
             strokeWidth: 2,
             child: Column(
               children: [
-                const Icon(Icons.cloud_upload_outlined, size: 50, color: Colors.deepPurple),
+                const Icon(Icons.cloud_upload_outlined,
+                    size: 50, color: Colors.deepPurple),
                 const SizedBox(height: 12),
                 Text(
                   'Upload Medical Report',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.deepPurple[800]),
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepPurple[800]),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'Drag & drop your reports here, or click to browse',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                  style:
+                      TextStyle(fontSize: 13, color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 16),
                 SizedBox(
@@ -561,15 +672,18 @@ class _ChronoCancerHomePageState extends State<ChronoCancerHomePage> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      padding:
+                          const EdgeInsets.symmetric(vertical: 12),
                     ),
-                    child: const Text('Choose File', style: TextStyle(color: Colors.white)),
+                    child: const Text('Choose File',
+                        style: TextStyle(color: Colors.white)),
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   'Supports PDF, JPG, PNG. Max. Size 50MB',
-                  style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+                  style:
+                      TextStyle(fontSize: 11, color: Colors.grey[500]),
                 ),
               ],
             ),
@@ -637,7 +751,8 @@ class _ChronoCancerHomePageState extends State<ChronoCancerHomePage> {
                           color: Colors.deepPurple,
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: const Icon(Icons.local_hospital, color: Colors.white),
+                        child: const Icon(Icons.local_hospital,
+                            color: Colors.white),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
@@ -646,18 +761,22 @@ class _ChronoCancerHomePageState extends State<ChronoCancerHomePage> {
                           children: [
                             const Text(
                               'Radiant Hospital',
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold),
                             ),
                             Text(
                               'Jakarta, Indonesia',
-                              style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                              style: TextStyle(
+                                  fontSize: 13, color: Colors.grey[600]),
                             ),
                           ],
                         ),
                       ),
                       TextButton(
                         onPressed: () {},
-                        child: const Text('See map', style: TextStyle(color: Colors.deepPurple)),
+                        child: const Text('See map',
+                            style: TextStyle(color: Colors.deepPurple)),
                       ),
                     ],
                   ),
@@ -669,37 +788,34 @@ class _ChronoCancerHomePageState extends State<ChronoCancerHomePage> {
       ],
     );
   }
+}
 
-  BottomNavigationBar _buildBottomNavigationBar() {
-    return BottomNavigationBar(
-      type: BottomNavigationBarType.fixed,
-      selectedItemColor: Colors.deepPurple,
-      unselectedItemColor: Colors.grey,
-      showUnselectedLabels: true,
-      selectedLabelStyle: const TextStyle(fontSize: 12),
-      unselectedLabelStyle: const TextStyle(fontSize: 12),
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home_outlined),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.analytics_outlined),
-          label: 'Analytics',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.favorite_border),
-          label: 'Family',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person_outline),
-          label: 'Me',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.family_restroom_outlined),
-          label: 'Doctor',
-        ),
-      ],
-    );
+// -------------------- Placeholder Pages --------------------
+
+
+class FamilyPage extends StatelessWidget {
+  const FamilyPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text('Family Page'));
+  }
+}
+
+class MePage extends StatelessWidget {
+  const MePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text('Me Page'));
+  }
+}
+
+class DoctorPage extends StatelessWidget {
+  const DoctorPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text('Doctor Page'));
   }
 }

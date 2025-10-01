@@ -22,23 +22,31 @@ class _HealthAnalyticsScreenState extends State<HealthAnalyticsScreen> {
           children: [
             const Icon(Icons.show_chart, color: Colors.blueAccent),
             const SizedBox(width: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Health Analytics',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                ),
-                Text(
-                  'Medical Prevention Group, Inc',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[600],
-                      ),
-                ),
-              ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Health Analytics',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                    softWrap: true,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    'Medical Prevention Group, Inc',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.grey[600],
+                        ),
+                    softWrap: true,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -47,35 +55,37 @@ class _HealthAnalyticsScreenState extends State<HealthAnalyticsScreen> {
             padding: EdgeInsets.all(8.0),
             child: CircleAvatar(
               backgroundImage: NetworkImage(
-                  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80'), // Replace with actual image
+                  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80'),
             ),
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildSectionTitle('Harmony Score Trends',
-                  'AI converts medical reports into actionable prevention scores.'),
-              _buildHarmonyScoreOverTimeCard(),
-              const SizedBox(height: 24),
-              _buildSectionTitle('Medical Reports Summary',
-                  'Analytics reports auto-triggers alerts linked to disease severities.'),
-              _buildTotalReportsUploadedCard(),
-              const SizedBox(height: 24),
-              _buildNormalVsAbnormalReportsCard(),
-              const SizedBox(height: 24),
-              _buildDetailedBreakdownCard(),
-              const SizedBox(height: 24),
-              _buildSectionTitle('Patients Engagement Analytics',
-                  'Monitor patient-doctor consistency.'),
-              _buildPatientEngagementOverviewCard(),
-              const SizedBox(height: 24),
-              _buildActivePatientsSummary(),
-            ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildSectionTitle('Harmony Score Trends',
+                    'AI converts medical reports into actionable prevention scores.'),
+                _buildHarmonyScoreOverTimeCard(),
+                const SizedBox(height: 24),
+                _buildSectionTitle('Medical Reports Summary',
+                    'Analytics reports auto-triggers alerts linked to disease severities.'),
+                _buildTotalReportsUploadedCard(),
+                const SizedBox(height: 24),
+                _buildNormalVsAbnormalReportsCard(),
+                const SizedBox(height: 24),
+                _buildDetailedBreakdownCard(),
+                const SizedBox(height: 24),
+                _buildSectionTitle('Patients Engagement Analytics',
+                    'Monitor patient-doctor consistency.'),
+                _buildPatientEngagementOverviewCard(),
+                const SizedBox(height: 24),
+                _buildActivePatientsSummary(),
+              ],
+            ),
           ),
         ),
       ),
@@ -149,11 +159,14 @@ class _HealthAnalyticsScreenState extends State<HealthAnalyticsScreen> {
               children: [
                 const Icon(Icons.info_outline, size: 16, color: Colors.blue),
                 const SizedBox(width: 4),
-                Text(
-                  'The rising score indicates better prevention status',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[600],
-                      ),
+                Expanded(
+                  child: Text(
+                    'The rising score indicates better prevention status',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.grey[600],
+                        ),
+                    softWrap: true,
+                  ),
                 ),
               ],
             ),
@@ -189,102 +202,104 @@ class _HealthAnalyticsScreenState extends State<HealthAnalyticsScreen> {
                 ),
               ),
             ),
-            SizedBox(
-              height: 200,
-              child: LineChart(
-                LineChartData(
-                  gridData: FlGridData(
-                    show: true,
-                    drawHorizontalLine: true,
-                    drawVerticalLine: true,
-                    getDrawingHorizontalLine: (value) => FlLine(
-                      color: Colors.grey[200]!,
-                      strokeWidth: 1,
-                    ),
-                    getDrawingVerticalLine: (value) => FlLine(
-                      color: Colors.transparent,
-                      strokeWidth: 1,
-                    ),
-                  ),
-                  titlesData: FlTitlesData(
-                    show: true,
-                    rightTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    topTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: false, // Hide bottom titles as per image
+            const SizedBox(height: 12),
+            ConstrainedBox(
+              constraints: const BoxConstraints(
+                minHeight: 120,
+                maxHeight: 240,
+              ),
+              child: SizedBox(
+                height: 200,
+                child: LineChart(
+                  LineChartData(
+                    gridData: FlGridData(
+                      show: true,
+                      drawHorizontalLine: true,
+                      drawVerticalLine: true,
+                      getDrawingHorizontalLine: (value) => FlLine(
+                        color: Colors.grey[200]!,
+                        strokeWidth: 1,
+                      ),
+                      getDrawingVerticalLine: (value) => FlLine(
+                        color: Colors.transparent,
+                        strokeWidth: 1,
                       ),
                     ),
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        getTitlesWidget: (value, meta) {
-                          String text;
-                          switch (value.toInt()) {
-                            case 0:
-                              text = '';
-                              break;
-                            case 25:
-                              text = '25';
-                              break;
-                            case 50:
-                              text = '50';
-                              break;
-                            case 75:
-                              text = '75';
-                              break;
-                            case 100:
-                              text = '100';
-                              break;
-                            default:
-                              text = '';
-                              break;
-                          }
-                          return Text(text,
-                              style: Theme.of(context).textTheme.bodySmall,
-                              textAlign: TextAlign.left);
-                        },
-                        reservedSize: 28,
-                        interval: 25,
+                    titlesData: FlTitlesData(
+                      show: true,
+                      rightTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      topTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      bottomTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      leftTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          getTitlesWidget: (value, meta) {
+                            String text;
+                            switch (value.toInt()) {
+                              case 25:
+                                text = '25';
+                                break;
+                              case 50:
+                                text = '50';
+                                break;
+                              case 75:
+                                text = '75';
+                                break;
+                              case 100:
+                                text = '100';
+                                break;
+                              default:
+                                text = '';
+                                break;
+                            }
+                            return Text(text,
+                                style: Theme.of(context).textTheme.bodySmall,
+                                textAlign: TextAlign.left);
+                          },
+                          reservedSize: 28,
+                          interval: 25,
+                        ),
                       ),
                     ),
-                  ),
-                  borderData: FlBorderData(
-                    show: true,
-                    border: Border.all(color: Colors.grey[200]!, width: 1),
-                  ),
-                  minX: 0,
-                  maxX: 6,
-                  minY: 0,
-                  maxY: 100,
-                  lineBarsData: [
-                    LineChartBarData(
-                      spots: const [
-                        FlSpot(0, 40),
-                        FlSpot(1, 45),
-                        FlSpot(2, 55),
-                        FlSpot(3, 60),
-                        FlSpot(4, 70),
-                        FlSpot(5, 72),
-                        FlSpot(6, 84),
-                      ],
-                      isCurved: true,
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.blue.withOpacity(0.5),
-                          Colors.blueAccent,
+                    borderData: FlBorderData(
+                      show: true,
+                      border: Border.all(color: Colors.grey[200]!, width: 1),
+                    ),
+                    minX: 0,
+                    maxX: 6,
+                    minY: 0,
+                    maxY: 100,
+                    lineBarsData: [
+                      LineChartBarData(
+                        spots: const [
+                          FlSpot(0, 40),
+                          FlSpot(1, 45),
+                          FlSpot(2, 55),
+                          FlSpot(3, 60),
+                          FlSpot(4, 70),
+                          FlSpot(5, 72),
+                          FlSpot(6, 84),
                         ],
+                        isCurved: true,
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.blue.withOpacity(0.5),
+                            Colors.blueAccent,
+                          ],
+                        ),
+                        barWidth: 3,
+                        isStrokeCapRound: true,
+                        dotData: const FlDotData(show: true),
+                        belowBarData: BarAreaData(show: false),
                       ),
-                      barWidth: 3,
-                      isStrokeCapRound: true,
-                      dotData: const FlDotData(show: true),
-                      belowBarData: BarAreaData(show: false),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -306,25 +321,31 @@ class _HealthAnalyticsScreenState extends State<HealthAnalyticsScreen> {
   }
 
   Widget _buildLegendItem(String text, Color color) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 10,
-          height: 10,
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(2),
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 160),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 10,
+            height: 10,
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(2),
+            ),
           ),
-        ),
-        const SizedBox(width: 4),
-        Text(
-          text,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Colors.grey[700],
-              ),
-        ),
-      ],
+          const SizedBox(width: 4),
+          Flexible(
+            child: Text(
+              text,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.grey[700],
+                  ),
+              softWrap: true,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -341,68 +362,95 @@ class _HealthAnalyticsScreenState extends State<HealthAnalyticsScreen> {
               children: [
                 const Icon(Icons.description, color: Colors.blueAccent),
                 const SizedBox(width: 8),
-                Text(
-                  'Total Reports Uploaded',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
+                Expanded(
+                  child: Text(
+                    'Total Reports Uploaded',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                    softWrap: true,
+                  ),
                 ),
-                const Spacer(),
-                Text(
-                  'This month',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[600],
+                Flexible(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'This month',
+                        style:
+                            Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  color: Colors.grey[600],
+                                ),
+                        softWrap: true,
                       ),
+                      const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
+                    ],
+                  ),
                 ),
-                const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
               ],
             ),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '32',
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
-                    ),
-                    Text(
-                      'Total Reports',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.grey[600],
-                          ),
-                    ),
-                  ],
+                Flexible(
+                  flex: 1,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '32',
+                        style:
+                            Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                ),
+                      ),
+                      Text(
+                        'Total Reports',
+                        style:
+                            Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  color: Colors.grey[600],
+                                ),
+                      ),
+                    ],
+                  ),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '12',
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                const SizedBox(width: 16),
+                Flexible(
+                  flex: 1,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '12',
+                        style:
+                            Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                ),
+                      ),
+                      Row(
+                        children: [
+                          const Icon(Icons.arrow_downward,
+                              color: Colors.red, size: 16),
+                          Flexible(
+                            child: Text(
+                              '<7 from last month',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                    color: Colors.red,
+                                  ),
+                              softWrap: true,
+                            ),
                           ),
-                    ),
-                    Row(
-                      children: [
-                        const Icon(Icons.arrow_downward,
-                            color: Colors.red, size: 16),
-                        Text(
-                          '<7 from last month',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Colors.red,
-                              ),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -412,6 +460,7 @@ class _HealthAnalyticsScreenState extends State<HealthAnalyticsScreen> {
     );
   }
 
+  /// ✅ FIXED PIE CHART OVERLAP ISSUE
   Widget _buildNormalVsAbnormalReportsCard() {
     return Card(
       elevation: 0,
@@ -429,45 +478,97 @@ class _HealthAnalyticsScreenState extends State<HealthAnalyticsScreen> {
                   ),
             ),
             const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                SizedBox(
-                  width: 120,
-                  height: 120,
-                  child: PieChart(
-                    PieChartData(
-                      pieTouchData: PieTouchData(
-                        touchCallback: (FlTouchEvent event, pieTouchResponse) {
-                          setState(() {
-                            if (!event.isInterestedForInteractions ||
-                                pieTouchResponse == null ||
-                                pieTouchResponse.touchedSection == null) {
-                              touchedIndex = -1;
-                              return;
-                            }
-                            touchedIndex = pieTouchResponse
-                                .touchedSection!.touchedSectionIndex;
-                          });
-                        },
-                      ),
-                      borderData: FlBorderData(show: false),
-                      sectionsSpace: 2,
-                      centerSpaceRadius: 40,
-                      sections: showingSections(),
-                    ),
-                  ),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            LayoutBuilder(builder: (context, constraints) {
+              final isNarrow = constraints.maxWidth < 360;
+              if (isNarrow) {
+                return Column(
                   children: [
-                    _buildReportStatusItem('Normal', 7, Colors.green),
-                    const SizedBox(height: 8),
-                    _buildReportStatusItem('Abnormal', 3, Colors.red),
+                    SizedBox(
+                      width: 160,
+                      height: 160,
+                      child: PieChart(
+                        PieChartData(
+                          pieTouchData: PieTouchData(
+                            touchCallback:
+                                (FlTouchEvent event, pieTouchResponse) {
+                              setState(() {
+                                if (!event.isInterestedForInteractions ||
+                                    pieTouchResponse == null ||
+                                    pieTouchResponse.touchedSection == null) {
+                                  touchedIndex = -1;
+                                  return;
+                                }
+                                touchedIndex = pieTouchResponse
+                                    .touchedSection!.touchedSectionIndex;
+                              });
+                            },
+                          ),
+                          borderData: FlBorderData(show: false),
+                          sectionsSpace: 2,
+                          centerSpaceRadius: 40,
+                          sections: showingSections(),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildReportStatusItem('Normal', 7, Colors.green),
+                        const SizedBox(height: 8),
+                        _buildReportStatusItem('Abnormal', 3, Colors.red),
+                      ],
+                    ),
                   ],
-                ),
-              ],
-            ),
+                );
+              } else {
+                return Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: SizedBox(
+                        height: 180,
+                        child: PieChart(
+                          PieChartData(
+                            pieTouchData: PieTouchData(
+                              touchCallback:
+                                  (FlTouchEvent event, pieTouchResponse) {
+                                setState(() {
+                                  if (!event.isInterestedForInteractions ||
+                                      pieTouchResponse == null ||
+                                      pieTouchResponse.touchedSection == null) {
+                                    touchedIndex = -1;
+                                    return;
+                                  }
+                                  touchedIndex = pieTouchResponse
+                                      .touchedSection!.touchedSectionIndex;
+                                });
+                              },
+                            ),
+                            borderData: FlBorderData(show: false),
+                            sectionsSpace: 2,
+                            centerSpaceRadius: 50,
+                            sections: showingSections(),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 24),
+                    Expanded(
+                      flex: 1,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildReportStatusItem('Normal', 7, Colors.green),
+                          const SizedBox(height: 8),
+                          _buildReportStatusItem('Abnormal', 3, Colors.red),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              }
+            }),
           ],
         ),
       ),
@@ -526,11 +627,14 @@ class _HealthAnalyticsScreenState extends State<HealthAnalyticsScreen> {
           ),
         ),
         const SizedBox(width: 8),
-        Text(
-          status,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.black87,
-              ),
+        Flexible(
+          child: Text(
+            status,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Colors.black87,
+                ),
+            softWrap: true,
+          ),
         ),
         const SizedBox(width: 16),
         Text(
@@ -582,6 +686,7 @@ class _HealthAnalyticsScreenState extends State<HealthAnalyticsScreen> {
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: Colors.orange[700],
                           ),
+                      softWrap: true,
                     ),
                   ),
                 ],
@@ -607,13 +712,16 @@ class _HealthAnalyticsScreenState extends State<HealthAnalyticsScreen> {
             ),
           ),
           const SizedBox(width: 8),
-          Text(
-            metric,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.black87,
-                ),
+          Expanded(
+            child: Text(
+              metric,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.black87,
+                  ),
+              softWrap: true,
+            ),
           ),
-          const Spacer(),
+          const SizedBox(width: 8),
           Text(
             count.toString(),
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -722,16 +830,19 @@ class _HealthAnalyticsScreenState extends State<HealthAnalyticsScreen> {
                           fontWeight: FontWeight.bold,
                           color: Colors.black87,
                         ),
+                    softWrap: true,
                   ),
                   Text(
                     details,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: Colors.grey[600],
                         ),
+                    softWrap: true,
                   ),
                 ],
               ),
             ),
+            const SizedBox(width: 8),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
@@ -744,6 +855,7 @@ class _HealthAnalyticsScreenState extends State<HealthAnalyticsScreen> {
                       color: isWarning ? Colors.red[700] : Colors.green[700],
                       fontWeight: FontWeight.bold,
                     ),
+                softWrap: true,
               ),
             ),
           ],
@@ -751,10 +863,22 @@ class _HealthAnalyticsScreenState extends State<HealthAnalyticsScreen> {
         const SizedBox(height: 8),
         Row(
           children: [
-            const SizedBox(width: 52), // Align with text
-            _buildInfoChip(reports, Colors.blue[100]!, Colors.blue[700]!),
-            const SizedBox(width: 8),
-            _buildInfoChip(tasks, Colors.green[100]!, Colors.green[700]!),
+            const SizedBox(width: 52),
+            Flexible(
+              child: Row(
+                children: [
+                  Flexible(
+                    child: _buildInfoChip(
+                        reports, Colors.blue[100]!, Colors.blue[700]!),
+                  ),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: _buildInfoChip(
+                        tasks, Colors.green[100]!, Colors.green[700]!),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ],
@@ -774,6 +898,7 @@ class _HealthAnalyticsScreenState extends State<HealthAnalyticsScreen> {
               color: textColor,
               fontWeight: FontWeight.w500,
             ),
+        softWrap: true,
       ),
     );
   }
@@ -802,21 +927,18 @@ class _HealthAnalyticsScreenState extends State<HealthAnalyticsScreen> {
                 color: Colors.black87,
               ),
         ),
-        Text(
-          label,
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Colors.grey[600],
-              ),
+        SizedBox(
+          width: 96,
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Colors.grey[600],
+                ),
+            softWrap: true,
+          ),
         ),
       ],
     );
   }
 }
-
-// To run this code, you'll need the `fl_chart` dependency.
-// Add this to your pubspec.yaml:
-// dependencies:
-//   flutter:
-//     sdk: flutter
-//   fl_chart: ^0.68.0 # Use the latest version

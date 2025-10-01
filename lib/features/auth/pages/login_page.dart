@@ -1,7 +1,5 @@
-import 'package:chronocancer_ai/features/patient/pages/patient_home.dart';
 import 'package:flutter/material.dart';
 import 'signup_page.dart';
-import 'package:chronocancer_ai/features/patient/pages/patient_home.dart';
 
 class LoginPage extends StatefulWidget {
   final String role; // role passed from selection
@@ -12,6 +10,27 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  void _navigateBasedOnRole() {
+    String route = '/';
+
+    switch (widget.role.toLowerCase()) {
+      case 'doctor':
+        route = '/doctorsHome';
+        break;
+      case 'patient':
+        route = '/patientHome';
+        break;
+      case 'worker':
+      case 'asha worker':
+        route = '/workerHome';
+        break;
+      default:
+        route = '/'; // fallback to splash
+    }
+
+    Navigator.pushReplacementNamed(context, route);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,8 +47,8 @@ class _LoginPageState extends State<LoginPage> {
                 // Logo Image
                 Image.asset(
                   'assets/images/chronocancer_logo.png',
-                  width: 250, // Preserve width
-                  height: 80, // Preserve height
+                  width: 250,
+                  height: 80,
                   fit: BoxFit.contain,
                 ),
                 const SizedBox(height: 50),
@@ -82,14 +101,16 @@ class _LoginPageState extends State<LoginPage> {
                           hintStyle: const TextStyle(color: Colors.grey),
                           filled: true,
                           fillColor: Colors.white,
-                          contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 15, horizontal: 20),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide.none,
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(color: Colors.blueAccent, width: 1.5),
+                            borderSide: const BorderSide(
+                                color: Colors.blueAccent, width: 1.5),
                           ),
                         ),
                       ),
@@ -103,14 +124,16 @@ class _LoginPageState extends State<LoginPage> {
                           hintStyle: const TextStyle(color: Colors.grey),
                           filled: true,
                           fillColor: Colors.white,
-                          contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 15, horizontal: 20),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide.none,
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(color: Colors.blueAccent, width: 1.5),
+                            borderSide: const BorderSide(
+                                color: Colors.blueAccent, width: 1.5),
                           ),
                         ),
                       ),
@@ -120,12 +143,7 @@ class _LoginPageState extends State<LoginPage> {
                       SizedBox(
                         height: 50,
                         child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (context) => const HomePage()),
-                            );
-                          },
+                          onPressed: _navigateBasedOnRole,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.black,
                             shape: RoundedRectangleBorder(
@@ -151,13 +169,17 @@ class _LoginPageState extends State<LoginPage> {
                         children: <Widget>[
                           const Text(
                             'Don\'t have an account? ',
-                            style: TextStyle(color: Colors.black54, fontSize: 15),
+                            style: TextStyle(
+                                color: Colors.black54, fontSize: 15),
                           ),
                           GestureDetector(
                             onTap: () {
                               Navigator.pushReplacement(
                                 context,
-                                MaterialPageRoute(builder: (context) => SignupPage(role: widget.role)),
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      SignupPage(role: widget.role),
+                                ),
                               );
                             },
                             child: const Text(

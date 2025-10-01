@@ -5,11 +5,22 @@ import 'package:chronocancer_ai/features/auth/pages/role_selection_page.dart';
 //import 'package:chronocancer_ai/features/auth/pages/signup_page.dart';
 import 'package:chronocancer_ai/features/auth/pages/splash_screen.dart';
 import 'package:chronocancer_ai/features/doctor/pages/analytics_dashboard_page.dart';
+import 'package:chronocancer_ai/features/doctor/pages/decision_support_page.dart';
+import 'package:chronocancer_ai/features/doctor/pages/doctor_home.dart';
+import 'package:chronocancer_ai/features/doctor/pages/patient_detail_page.dart';
+import 'package:chronocancer_ai/features/doctor/pages/prescription_page.dart';
+import 'package:chronocancer_ai/features/doctor/pages/risk_queue_page.dart';
+import 'package:chronocancer_ai/features/doctor/pages/teleconsult_page.dart';
 import 'package:chronocancer_ai/features/patient/pages/appointment_booking_page.dart';
 import 'package:chronocancer_ai/features/patient/pages/bp_entry_page.dart';
 //import 'package:chronocancer_ai/features/auth/pages/login_page.dart';
 import 'package:chronocancer_ai/features/auth/pages/onboarding1_page.dart';
 import 'package:chronocancer_ai/features/patient/pages/patient_home.dart';
+import 'package:chronocancer_ai/features/worker/pages/community_dashboard_page.dart';
+import 'package:chronocancer_ai/features/worker/pages/patient_queue_page.dart';
+import 'package:chronocancer_ai/features/worker/pages/report_upload_page.dart';
+import 'package:chronocancer_ai/features/worker/pages/training_hub_page.dart';
+import 'package:chronocancer_ai/features/worker/pages/worker_home.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -35,9 +46,20 @@ class MyApp extends StatelessWidget {
         //'/signupPage':(context) => const SignupPage(),
         '/splashScreen':(context) => const SplashPage(),
         '/analyticsDashboard':(context) => const HealthAnalyticsScreen(),
+        '/doctorsHome':(context) => const DoctorHomePage(),
         '/scheduling':(context) => const SchedulingPage(),
         '/BPentryPage':(context) => const BloodPressureApp(),
         '/patientHome':(context) => const HomePage(),
+        '/communityDashboard' : (context) => const AshaWorkerDashboard(),
+        '/patientQueue':(context) => const PatientQueue(),
+        '/reportUpload':(context) => const AshaWorkerReportsScreen(),
+        '/trainingHub':(context) => const TrainingHubScreen(),
+        '/workerHome':(context) => const AshaDashBoard(),
+        '/decisionSupport':(context) => const DecisionSupportPage(),
+        '/patientDetails':(context) => PatientDetailPage(),
+        '/prescription':(context) => const PrescriptionPage(),
+        '/riskQueue':(context) => const RiskQueueScreen(),
+        '/teleConsult':(context) => const TeleconsultPage(),
       }
     );
   }

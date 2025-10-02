@@ -15,7 +15,7 @@ class _Onboarding2State extends State<Onboarding2> {
     super.initState();
 
     // 👇 Start a 5-second timer
-    Timer(const Duration(seconds: 5), () {
+    Timer(const Duration(seconds: 2), () {
       if (mounted) {
         Navigator.pushReplacement(
           context,
@@ -58,7 +58,7 @@ class _Onboarding2State extends State<Onboarding2> {
                 children: [
                   SizedBox(height: MediaQuery.of(context).padding.top + 32),
                   const Text(
-                    'Smarter Screening,\nSafer Futures',
+                    'Your Health, Simplified\nin One Number',
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
@@ -73,26 +73,26 @@ class _Onboarding2State extends State<Onboarding2> {
                       height: MediaQuery.of(context).size.width * 0.8 * (296 / 358),
                       color: Colors.transparent,
                       child: Image.asset(
-                        "assets/images/onbaording1_transparent.png",
+                        "assets/images/onboarding2_transparent.png",
                       ),
                     ),
                   ),
                   const SizedBox(height: 64),
                   _buildFeatureText(
                     context,
-                    'AI-powered predictions detect risks early, ensuring chronic care doesn\'t turn into cancer.',
+                    'Automatically shares your real-time location with trusted contacts during critical times, ensuring they know where you are..',
                   ),
                   const SizedBox(height: 32),
                   _buildFeatureText(
                     context,
                     'Your health deserves precision — smarter screening for a stronger tomorrow.',
                   ),
-                  const SizedBox(height: 32),
-                  _buildFeatureText(
-                    context,
-                    'Reimagining cancer care with technology that looks ahead.',
-                  ),
-                  const SizedBox(height: 48),
+                  // const SizedBox(height: 32),
+                  // _buildFeatureText(
+                  //   context,
+                  //   'Reimagining cancer care with technology that looks ahead.',
+                  // ),
+                  // const SizedBox(height: 48),
                 ],
               ),
             ),

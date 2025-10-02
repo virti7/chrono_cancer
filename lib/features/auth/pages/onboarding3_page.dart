@@ -14,8 +14,7 @@ class _LocationNotifierScreenState extends State<LocationNotifierScreen> {
   void initState() {
     super.initState();
 
-    // 👇 Start a 5-second timer
-    Timer(const Duration(seconds: 5), () {
+    Timer(const Duration(seconds: 2), () {
       if (mounted) {
         Navigator.pushReplacement(
           context,
@@ -27,38 +26,44 @@ class _LocationNotifierScreenState extends State<LocationNotifierScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
         children: [
+          // Centered Title
           Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 60.0, left: 20.0),
-              child: Text(
-                'Location Notifier',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.deepPurple[300],
-                ),
+            top: screenHeight * 0.1,
+            left: 20,
+            right: 20,
+            child: Text(
+              'Location Notifier',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: Colors.deepPurple[300],
               ),
             ),
           ),
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.45,
-            left: MediaQuery.of(context).size.width * 0.55,
-            child: Container(
-              width: 10,
-              height: 10,
-              decoration: const BoxDecoration(
-                color: Colors.red,
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
+
+          // Red Dot Indicator
+          // Positioned(
+          //   top: screenHeight * 0.35,
+          //   left: screenWidth * 0.55,
+          //   child: Container(
+          //     width: 12,
+          //     height: 12,
+          //     decoration: const BoxDecoration(
+          //       color: Colors.red,
+          //       shape: BoxShape.circle,
+          //     ),
+          //   ),
+          // ),
+
+          // Bottom Gradient Section
           Positioned(
             bottom: 0,
             left: 0,
@@ -66,19 +71,19 @@ class _LocationNotifierScreenState extends State<LocationNotifierScreen> {
             child: ClipPath(
               clipper: _BottomClipper(),
               child: Container(
-                height: MediaQuery.of(context).size.height * 0.4,
+                height: screenHeight * 0.4,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Colors.blue.withOpacity(0.1),
-                      Colors.purple.withOpacity(0.1),
+                      Colors.blue.withOpacity(0.15),
+                      Colors.purple.withOpacity(0.15),
                     ],
                   ),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 20),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
@@ -88,6 +93,7 @@ class _LocationNotifierScreenState extends State<LocationNotifierScreen> {
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.grey[800],
+                          height: 1.5,
                         ),
                       ),
                       const SizedBox(height: 30),
@@ -95,8 +101,8 @@ class _LocationNotifierScreenState extends State<LocationNotifierScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                            width: 8,
-                            height: 8,
+                            width: 10,
+                            height: 10,
                             decoration: BoxDecoration(
                               color: Colors.purple[800],
                               shape: BoxShape.circle,
@@ -104,8 +110,8 @@ class _LocationNotifierScreenState extends State<LocationNotifierScreen> {
                           ),
                           const SizedBox(width: 8),
                           Container(
-                            width: 8,
-                            height: 8,
+                            width: 10,
+                            height: 10,
                             decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.8),
                               shape: BoxShape.circle,
@@ -113,8 +119,8 @@ class _LocationNotifierScreenState extends State<LocationNotifierScreen> {
                           ),
                           const SizedBox(width: 8),
                           Container(
-                            width: 8,
-                            height: 8,
+                            width: 10,
+                            height: 10,
                             decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.8),
                               shape: BoxShape.circle,
@@ -139,9 +145,8 @@ class _BottomClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     Path path = Path();
-    path.moveTo(0, size.height * 0.2);
-    path.lineTo(size.width * 0.6, 0);
-    path.lineTo(size.width, size.height * 0.3);
+    path.moveTo(0, size.height * 0.25);
+    path.quadraticBezierTo(size.width * 0.5, 0, size.width, size.height * 0.25);
     path.lineTo(size.width, size.height);
     path.lineTo(0, size.height);
     path.close();

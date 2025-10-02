@@ -15,7 +15,7 @@ class _Onboarding1State extends State<Onboarding1> {
     super.initState();
 
     // 👇 Start a 5-second timer
-    Timer(const Duration(seconds: 5), () {
+    Timer(const Duration(seconds: 2), () {
       if (mounted) {
         Navigator.pushReplacement(
           context,
@@ -73,7 +73,7 @@ class _Onboarding1State extends State<Onboarding1> {
                       height: MediaQuery.of(context).size.width * 0.8 * (296 / 358),
                       color: Colors.transparent,
                       child: Image.asset(
-                        "assets/images/onbaording1_transparent.png",
+                        "assets/images/onboarding1_transparent.png",
                       ),
                     ),
                   ),

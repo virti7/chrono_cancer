@@ -87,7 +87,7 @@ Future<void> _signUp() async {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF0F4F7),
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -97,7 +97,7 @@ Future<void> _signUp() async {
             children: <Widget>[
               SizedBox(height: screenHeight * 0.1),
               Image.asset(
-                'assets/images/chronocancer_logo.png',
+                'assets/images/splash_screen_logo.jpeg',
                 height: 200,
               ),
               const SizedBox(height: 20),
@@ -117,7 +117,7 @@ Future<void> _signUp() async {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(24.0),
                   border: Border.all(
-                    color: Colors.blue.shade600,
+                    color: Colors.black87,
                     width: 2.0,
                   ),
                   boxShadow: [

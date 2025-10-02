@@ -26,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
         route = '/doctorsHome';
         break;
       case 'patient':
-        route = '/patientHome';
+        route = '/consentPage';
         break;
       case 'worker':
       case 'asha worker':
@@ -104,12 +104,12 @@ Future<void> _login() async {
 
                 // Logo Image
                 Image.asset(
-                  'assets/images/chronocancer_logo.png',
-                  width: 250,
-                  height: 80,
+                  'assets/images/splash_screen_logo.jpeg',
+                  width: 500,
+                  height: 200,
                   fit: BoxFit.contain,
                 ),
-                const SizedBox(height: 50),
+                const SizedBox(height: 10),
 
                 // Tagline
                 Text(
@@ -127,8 +127,12 @@ Future<void> _login() async {
                 Container(
                   padding: const EdgeInsets.all(20.0),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF9F9F9),
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(15.0),
+                    border: Border.all(
+                    color: Colors.black87,
+                    width: 2.0,
+                    ),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.grey.withOpacity(0.1),
@@ -159,7 +163,7 @@ Future<void> _login() async {
                           hintText: 'Email Address',
                           hintStyle: const TextStyle(color: Colors.grey),
                           filled: true,
-                          fillColor: Colors.white,
+                          fillColor: const Color(0xFFF0F4F7),
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 15, horizontal: 20),
                           border: OutlineInputBorder(
@@ -183,7 +187,7 @@ Future<void> _login() async {
                           hintText: 'Enter your password',
                           hintStyle: const TextStyle(color: Colors.grey),
                           filled: true,
-                          fillColor: Colors.white,
+                          fillColor: const Color(0xFFF0F4F7),
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 15, horizontal: 20),
                           border: OutlineInputBorder(

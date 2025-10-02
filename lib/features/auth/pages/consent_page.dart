@@ -135,7 +135,7 @@ class _PrivacyConsentScreenState extends State<PrivacyConsentScreen> {
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () {
-                        // Handle "Go Back" action
+                        Navigator.pop(context);
                       },
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -158,7 +158,7 @@ class _PrivacyConsentScreenState extends State<PrivacyConsentScreen> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        // Handle "Agree And Continue" action
+                        Navigator.pushNamed(context, '/patientHome');
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF2196F3), // Blue theme

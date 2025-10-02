@@ -157,7 +157,7 @@ class HomePageContent extends StatelessWidget {
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0),
               child: CircleAvatar(
-                backgroundImage: AssetImage('assets/images/batman.jpeg'),
+                backgroundImage: AssetImage('assets/images/transparent_default_user.png'),
               ),
             ),
           ],
@@ -321,73 +321,71 @@ class HomePageContent extends StatelessWidget {
     );
   }
 
-  Widget _buildCancerTypesSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+Widget _buildCancerTypesSection() {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text(
+            'Types of Cancer we treat!',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          TextButton(
+            onPressed: () {},
+            child: const Text(
+              'See all',
+              style: TextStyle(color: Colors.deepPurple),
+            ),
+          ),
+        ],
+      ),
+      const SizedBox(height: 12),
+      SizedBox(
+        height: 120, // slightly bigger to fit larger images
+        child: ListView(
+          scrollDirection: Axis.horizontal,
           children: [
-            const Text(
-              'Types of Cancer we treat!',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            TextButton(
-              onPressed: () {},
-              child: const Text('See all',
-                  style: TextStyle(color: Colors.deepPurple)),
-            ),
+            _buildCancerTypeCard('assets/images/transparent_brain_cancer.png'),
+            _buildCancerTypeCard('assets/images/transparent_liver_cancer.png'),
+            _buildCancerTypeCard('assets/images/transparent_lung_cancer.png'),
           ],
         ),
-        const SizedBox(height: 12),
-        SizedBox(
-          height: 120,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: [
-              _buildCancerTypeCard(
-                  'BRAIN CANCER', 'assets/images/transparent_brain_cancer.png'),
-              _buildCancerTypeCard(
-                  'LIVER CANCER', 'assets/images/transparent_brain_cancer.png'),
-              _buildCancerTypeCard('PROSTATE CANCER',
-                  'assets/images/transparent_brain_cancer.png'),
-            ],
-          ),
+      ),
+    ],
+  );
+}
+
+Widget _buildCancerTypeCard(String imagePath) {
+  return Container(
+    width: 150,
+    margin: const EdgeInsets.symmetric(horizontal: 8.0),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(16.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.1),
+          blurRadius: 8,
+          offset: const Offset(0, 4),
         ),
       ],
-    );
-  }
+    ),
+    child: Center(
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Image.asset(
+          imagePath,
+          fit: BoxFit.contain,
+          height: 80,
+          width: 100,
+        ),
+      ),
+    ),
+  );
+}
 
-  Widget _buildCancerTypeCard(String title, String imagePath) {
-    return Container(
-      width: 150,
-      margin: const EdgeInsets.only(right: 12),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 5,
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset(imagePath, height: 40),
-          const SizedBox(height: 8),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildHealthMonitoringSection() {
     return Row(
@@ -572,11 +570,11 @@ class HomePageContent extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             children: [
               _buildDoctorCard('Dr. Marcus MD.', 'Cardiologist',
-                  'assets/images/transparent_brain_cancer.png'),
+                  'assets/images/doctor1_transparent.png'),
               _buildDoctorCard('Dr. Maria Elena', 'Pediatrician',
-                  'assets/images/transparent_brain_cancer.png'),
+                  'assets/images/doctor2_transparent.png'),
               _buildDoctorCard('Dr. Stevi Jossi', 'Generalist',
-                  'assets/images/transparent_brain_cancer.png'),
+                  'assets/images/doctor3_transparent.png'),
             ],
           ),
         ),

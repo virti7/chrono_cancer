@@ -1,3 +1,4 @@
+import 'package:chronocancer_ai/features/doctor/pages/doctor_profile_page.dart';
 import 'package:chronocancer_ai/features/patient/pages/patient_home.dart';
 import 'package:flutter/material.dart';
 import 'package:chronocancer_ai/features/doctor/pages/analytics_dashboard_page.dart';
@@ -39,7 +40,7 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
       _buildHomePage(), // Home tab
       HealthAnalyticsScreen(), // Analytics tab
       PrescriptionPage(), // Prescription tab
-      Center(child: Text('Profile Page')), // Placeholder Profile tab
+      DoctorProfilePage(), // Placeholder Profile tab
     ];
   }
 

@@ -78,8 +78,8 @@ class _CommunityInsightsAppState extends State<CommunityInsightsApp> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: CircleAvatar(
-                backgroundImage: NetworkImage(
-                    'https://i.ibb.co/L6V62tS/OIG.png'), // Replace with your image
+                backgroundImage: AssetImage(
+                    'assets/images/transparent_default_user.png'), // Replace with your image
               ),
             ),
           ],

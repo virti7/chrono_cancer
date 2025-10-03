@@ -1,7 +1,9 @@
+// patient_details_2.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'patient_data.dart';
 import 'patient_details_3.dart';
+import 'package:chronocancer_ai/features/patient/pages/firestore_service.dart';
 
 class PatientDetails2 extends StatefulWidget {
   const PatientDetails2({super.key});
@@ -12,6 +14,16 @@ class PatientDetails2 extends StatefulWidget {
 
 class _PatientDetails2State extends State<PatientDetails2> {
   final _formKey = GlobalKey<FormState>();
+  final firestoreService = FirestoreService();
+
+  late int smokingStatus;
+  int? smokingYears;
+  int? cigarettesPerDay;
+
+  late int alcoholConsumption;
+  int? drinksPerWeek;
+
+  late int physicalActivityHoursPerWeek;
 
   @override
   void initState() {
@@ -25,16 +37,8 @@ class _PatientDetails2State extends State<PatientDetails2> {
     physicalActivityHoursPerWeek = patient.physicalActivityHoursPerWeek;
   }
 
-  late int smokingStatus;
-  int? smokingYears;
-  int? cigarettesPerDay;
-
-  late int alcoholConsumption;
-  int? drinksPerWeek;
-
-  late int physicalActivityHoursPerWeek;
-
-  void _saveAndNavigateNext() {
+  // ---------------- SAVE AND NEXT ----------------
+  void _saveAndNavigateNext() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
@@ -47,9 +51,37 @@ class _PatientDetails2State extends State<PatientDetails2> {
       patient.physicalActivityHoursPerWeek = physicalActivityHoursPerWeek;
       patient.update(); // notify listeners
 
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const PatientDetails3()),
-      );
+      // ---------------- FIRESTORE SAVE ----------------
+      final data = {
+        "smoking_status": smokingStatus == 0
+            ? "Never"
+            : smokingStatus == 1
+                ? "Former"
+                : "Current",
+        "smoking_years": smokingYears,
+        "cigarettes_per_day": cigarettesPerDay,
+        "alcohol_consumption": alcoholConsumption == 0
+            ? "Never"
+            : alcoholConsumption == 1
+                ? "Occasional"
+                : alcoholConsumption == 2
+                    ? "Moderate"
+                    : "Heavy",
+        "drinks_per_week": drinksPerWeek,
+        "physical_activity_hours_per_week": physicalActivityHoursPerWeek,
+      };
+
+      try {
+        await firestoreService.updateField("page2_lifestyle", data);
+
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const PatientDetails3()),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save data: $e')),
+        );
+      }
     }
   }
 
@@ -57,6 +89,7 @@ class _PatientDetails2State extends State<PatientDetails2> {
     Navigator.of(context).pop();
   }
 
+  // ---------------- UI ----------------
   @override
   Widget build(BuildContext context) {
     return Scaffold(

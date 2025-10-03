@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:chronocancer_ai/features/patient/pages/patient_data.dart';
+import 'package:chronocancer_ai/features/patient/pages/firestore_service.dart';
 import 'patient_details_2.dart'; // Next page
 
 class PatientDetails1 extends StatefulWidget {
@@ -12,6 +13,7 @@ class PatientDetails1 extends StatefulWidget {
 }
 
 class _PatientDetails1State extends State<PatientDetails1> {
+  final firestoreService = FirestoreService();
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _nameController;
   late TextEditingController _phoneController;
@@ -45,26 +47,56 @@ class _PatientDetails1State extends State<PatientDetails1> {
     bmi = weight / ((height / 100) * (height / 100));
   }
 
-  void _saveAndNext() {
-    if (_formKey.currentState!.validate()) {
-      final patient = context.read<PatientData>();
-      patient.fullName = _nameController.text;
-      patient.phoneNumber = _phoneController.text;
-      patient.email = _emailController.text;
-      patient.address = _addressController.text;
-      patient.emergencyContact = _emergencyController.text;
-      patient.age = age;
-      patient.gender = gender;
-      patient.height = height;
-      patient.weight = weight;
-      patient.calculateBmi();
+  void _saveAndNext() async {
+  if (_formKey.currentState!.validate()) {
+    final patient = context.read<PatientData>();
+    patient.fullName = _nameController.text;
+    patient.phoneNumber = _phoneController.text;
+    patient.email = _emailController.text;
+    patient.address = _addressController.text;
+    patient.emergencyContact = _emergencyController.text;
+    patient.age = age;
+    patient.gender = gender;
+    patient.height = height;
+    patient.weight = weight;
+    patient.calculateBmi();
 
+    // Prepare data Map for Firestore
+    final data = {
+      "full_name": patient.fullName,
+      "age": patient.age,
+      "gender": patient.gender == 0
+          ? "Male"
+          : patient.gender == 1
+              ? "Female"
+              : "Other",
+      "height": patient.height,
+      "weight": patient.weight,
+      "bmi": patient.bmi,
+      "phone_number": patient.phoneNumber,
+      "email": patient.email,
+      "address": patient.address,
+      "emergency_contact": patient.emergencyContact,
+    };
+
+    try {
+      // Save to Firestore under page1_basic_info
+      await firestoreService.savePage1BasicInfo(data);
+
+      // Navigate to next page
       Navigator.push(
         context,
         MaterialPageRoute(builder: (_) => const PatientDetails2()),
       );
+    } catch (e) {
+      // Show error if saving fails
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to save data: $e')),
+      );
     }
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

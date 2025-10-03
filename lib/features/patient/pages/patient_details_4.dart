@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'patient_data.dart';
 import 'patient_details_5.dart';
+import 'package:chronocancer_ai/features/patient/pages/firestore_service.dart';
 
 class PatientDetails4 extends StatefulWidget {
   const PatientDetails4({super.key});
@@ -12,15 +13,47 @@ class PatientDetails4 extends StatefulWidget {
 
 class _PatientDetails4State extends State<PatientDetails4> {
   final _formKey = GlobalKey<FormState>();
+  final firestoreService = FirestoreService();
 
-  void _saveAndNext(PatientData patientData) {
+  void _saveAndNext(PatientData patientData) async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      patientData.update();
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const PatientDetails5()),
-      );
+      patientData.update(); // Notify listeners
+
+      // Prepare data for Firestore
+      final data = {
+        "has_diabetes": patientData.hasDiabetes,
+        "diabetes_type": patientData.diabetesType,
+        "diabetes_duration_years": patientData.diabetesDurationYears,
+        "hba1c_latest": patientData.hba1cLatest,
+        "fasting_glucose": patientData.fastingGlucose,
+        "diabetes_controlled": patientData.diabetesControlled,
+        "diabetes_medications": patientData.diabetesMedications,
+        "metabolic_syndrome_diagnosed": patientData.metabolicSyndromeDiagnosed,
+        "waist_circumference": patientData.waistCircumference,
+        "has_hypertension": patientData.hasHypertension,
+        "bp_systolic_usual": patientData.bpSystolicUsual,
+        "bp_diastolic_usual": patientData.bpDiastolicUsual,
+        "hypertension_controlled": patientData.hypertensionControlled,
+        "bp_medications": patientData.bpMedications,
+        "has_copd": patientData.hasCopd,
+        "copd_severity": patientData.copdSeverity,
+        "chronic_cough_duration": patientData.chronicCoughDuration,
+        "has_asthma": patientData.hasAsthma,
+        "asthma_severity": patientData.asthmaSeverity,
+      };
+
+      try {
+        await firestoreService.updateField("page4_chronic_diseases", data);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const PatientDetails5()),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save data: $e')),
+        );
+      }
     }
   }
 
@@ -54,6 +87,7 @@ class _PatientDetails4State extends State<PatientDetails4> {
                 padding: const EdgeInsets.all(16),
                 children: [
                   _buildProgressBar(4, 6),
+
                   const SizedBox(height: 20),
 
                   // -------------------- METABOLIC CONDITIONS --------------------
@@ -63,7 +97,8 @@ class _PatientDetails4State extends State<PatientDetails4> {
                       _buildCheckboxTile(
                         label: 'Diabetes',
                         value: patientData.hasDiabetes,
-                        onChanged: (val) => setState(() => patientData.hasDiabetes = val),
+                        onChanged: (val) =>
+                            setState(() => patientData.hasDiabetes = val),
                       ),
                       if (patientData.hasDiabetes)
                         Column(
@@ -276,16 +311,12 @@ class _PatientDetails4State extends State<PatientDetails4> {
     );
   }
 
-  Widget _buildCheckboxTile({
-    required String label,
-    required bool value,
-    required ValueChanged<bool> onChanged,
-  }) {
+  Widget _buildCheckboxTile({required String label, required bool value, required ValueChanged<bool> onChanged}) {
     return CheckboxListTile(
       title: Text(label),
       value: value,
       onChanged: (val) {
-        if (val != null) onChanged(val); // FIX: handle nullable bool
+        if (val != null) onChanged(val);
       },
       controlAffinity: ListTileControlAffinity.leading,
       activeColor: const Color(0xFF10b981),
@@ -293,13 +324,7 @@ class _PatientDetails4State extends State<PatientDetails4> {
     );
   }
 
-  Widget _buildNumberField({
-    required String label,
-    required double value,
-    required double min,
-    required double max,
-    required ValueChanged<double> onChanged,
-  }) {
+  Widget _buildNumberField({required String label, required double value, required double min, required double max, required ValueChanged<double> onChanged}) {
     return TextFormField(
       initialValue: value.toString(),
       decoration: InputDecoration(labelText: label),
@@ -316,12 +341,7 @@ class _PatientDetails4State extends State<PatientDetails4> {
     );
   }
 
-  Widget _buildDropdownField({
-    required String label,
-    required String? value,
-    required List<String> options,
-    required ValueChanged<String> onChanged,
-  }) {
+  Widget _buildDropdownField({required String label, required String? value, required List<String> options, required ValueChanged<String> onChanged}) {
     return DropdownButtonFormField<String>(
       value: value,
       decoration: InputDecoration(labelText: label),
@@ -332,12 +352,7 @@ class _PatientDetails4State extends State<PatientDetails4> {
     );
   }
 
-  Widget _buildChoiceChips({
-    required String label,
-    required List<String> options,
-    required String selectedOption,
-    required ValueChanged<String> onSelected,
-  }) {
+  Widget _buildChoiceChips({required String label, required List<String> options, required String selectedOption, required ValueChanged<String> onSelected}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -357,12 +372,7 @@ class _PatientDetails4State extends State<PatientDetails4> {
     );
   }
 
-  Widget _buildMultiSelectField({
-    required String label,
-    required List<String> options,
-    required List<String> selectedOptions,
-    required ValueChanged<List<String>> onChanged,
-  }) {
+  Widget _buildMultiSelectField({required String label, required List<String> options, required List<String> selectedOptions, required ValueChanged<List<String>> onChanged}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

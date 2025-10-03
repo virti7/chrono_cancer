@@ -1,7 +1,9 @@
+// patient_details_3.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'patient_data.dart';
 import 'patient_details_4.dart';
+import 'package:chronocancer_ai/features/patient/pages/firestore_service.dart';
 
 class PatientDetails3 extends StatefulWidget {
   const PatientDetails3({super.key});
@@ -12,7 +14,7 @@ class PatientDetails3 extends StatefulWidget {
 
 class _PatientDetails3State extends State<PatientDetails3> {
   final _formKey = GlobalKey<FormState>();
-
+  final firestoreService = FirestoreService();
   late PatientData patient;
 
   @override
@@ -21,13 +23,37 @@ class _PatientDetails3State extends State<PatientDetails3> {
     patient = context.read<PatientData>();
   }
 
-  void _saveAndNavigateNext() {
+  // ---------------- SAVE AND NEXT ----------------
+  void _saveAndNavigateNext() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      patient.update(); // Notify listeners if needed
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => const PatientDetails4()),
-      );
+      patient.update(); // notify listeners
+
+      // Prepare Firestore data
+      final data = {
+        "family_cancer_history": patient.familyCancerHistory,
+        "family_members_with_cancer": patient.familyMembersWithCancer,
+        "family_diabetes": patient.familyDiabetes,
+        "family_hypertension": patient.familyHypertension,
+        "family_heart_disease": patient.familyHeartDisease,
+        "family_kidney_disease": patient.familyKidneyDisease,
+        "family_liver_disease": patient.familyLiverDisease,
+        "family_autoimmune_disease": patient.familyAutoimmuneDisease,
+        "consanguineous_marriage_in_family": patient.consanguineousMarriageInFamily,
+        "multiple_family_members_same_cancer": patient.multipleFamilyMembersSameCancer,
+      };
+
+      try {
+        await firestoreService.updateField("page3_family_history", data);
+
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const PatientDetails4()),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save data: $e')),
+        );
+      }
     }
   }
 
@@ -51,6 +77,7 @@ class _PatientDetails3State extends State<PatientDetails3> {
     });
   }
 
+  // ---------------- UI ----------------
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -171,6 +198,7 @@ class _PatientDetails3State extends State<PatientDetails3> {
     );
   }
 
+  // ---------------- WIDGET HELPERS ----------------
   Widget _buildProgressBar(int currentStep, int totalSteps) {
     return Column(
       children: [

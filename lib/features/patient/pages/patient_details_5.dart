@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'patient_data.dart';
 import 'patient_details_6.dart';
+import 'package:chronocancer_ai/features/patient/pages/firestore_service.dart';
 
 class PatientDetails5 extends StatefulWidget {
   const PatientDetails5({super.key});
@@ -16,6 +17,7 @@ class _PatientDetails5State extends State<PatientDetails5>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final _formKey = GlobalKey<FormState>();
+  final firestoreService = FirestoreService();
   XFile? labReportFile;
 
   @override
@@ -49,18 +51,86 @@ class _PatientDetails5State extends State<PatientDetails5>
     return (value < min || value > max) ? Colors.red : Colors.black;
   }
 
-  void _saveAndNext(PatientData patientData) {
+  Future<void> _saveAndNext(PatientData p) async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      patientData.update();
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const PatientDetails6()),
-      );
+      p.update();
+
+      // Prepare data for Firestore
+      final data = {
+        "hba1c": p.hba1c,
+        "fasting_glucose_lab": p.fastingGlucoseLab,
+        "random_glucose": p.randomGlucose,
+        "last_sugar_test_date": p.lastSugarTestDate?.toIso8601String(),
+        "cholesterol_total": p.cholesterolTotal,
+        "cholesterol_ldl": p.cholesterolLdl,
+        "cholesterol_hdl": p.cholesterolHdl,
+        "triglycerides": p.triglycerides,
+        "last_lipid_test_date": p.lastLipidTestDate?.toIso8601String(),
+        "bp_systolic_latest": p.bpSystolicLatest,
+        "bp_diastolic_latest": p.bpDiastolicLatest,
+        "bp_measurement_date": p.bpMeasurementDate?.toIso8601String(),
+        "crp": p.crpCReactiveProtein,
+        "esr": p.esrErythrocyteSedimentationRate,
+        "wbc": p.wbcWhiteBloodCells,
+        "hemoglobin": p.hemoglobin,
+        "platelets": p.platelets,
+        "alt": p.altSgpt,
+        "ast": p.astSgot,
+        "bilirubin_total": p.bilirubinTotal,
+        "albumin": p.albumin,
+        "creatinine": p.creatinine,
+        "bun": p.bunBloodUreaNitrogen,
+        "egfr": p.egfr,
+        "lab_report_path": p.labReportPath,
+      };
+
+      try {
+        await firestoreService.updateField("page5_lab_results", data);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const PatientDetails6()),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save data: $e')),
+        );
+      }
     }
   }
 
-  void _skipAndNext(PatientData patientData) {
+  void _skipAndNext(PatientData p) async {
+    // Save empty/default values if skipped
+    final data = {
+      "hba1c": null,
+      "fasting_glucose_lab": null,
+      "random_glucose": null,
+      "last_sugar_test_date": null,
+      "cholesterol_total": null,
+      "cholesterol_ldl": null,
+      "cholesterol_hdl": null,
+      "triglycerides": null,
+      "last_lipid_test_date": null,
+      "bp_systolic_latest": null,
+      "bp_diastolic_latest": null,
+      "bp_measurement_date": null,
+      "crp": null,
+      "esr": null,
+      "wbc": null,
+      "hemoglobin": null,
+      "platelets": null,
+      "alt": null,
+      "ast": null,
+      "bilirubin_total": null,
+      "albumin": null,
+      "creatinine": null,
+      "bun": null,
+      "egfr": null,
+      "lab_report_path": null,
+    };
+    try {
+      await firestoreService.updateField("page5_lab_results", data);
+    } catch (_) {}
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => const PatientDetails6()),
@@ -154,7 +224,6 @@ class _PatientDetails5State extends State<PatientDetails5>
   }
 
   // ----------------- TAB WIDGETS -----------------
-
   Widget _bloodSugarTab(PatientData p) {
     return ListView(
       padding: const EdgeInsets.all(16),
@@ -395,7 +464,6 @@ class _PatientDetails5State extends State<PatientDetails5>
   }
 
   // ----------------- REUSABLE WIDGETS -----------------
-
   Widget _numberField({
     required String label,
     required double value,

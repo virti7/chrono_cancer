@@ -26,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
         route = '/doctorsHome';
         break;
       case 'patient':
-        route = '/consentPage';
+        route = '/patientHome';
         break;
       case 'worker':
       case 'asha worker':

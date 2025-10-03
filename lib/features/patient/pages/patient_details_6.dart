@@ -3,6 +3,7 @@ import 'package:chronocancer_ai/features/patient/pages/patient_home.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'patient_data.dart';
+import 'package:chronocancer_ai/features/patient/pages/firestore_service.dart';
 
 class PatientDetails6 extends StatefulWidget {
   const PatientDetails6({super.key});
@@ -13,6 +14,7 @@ class PatientDetails6 extends StatefulWidget {
 
 class _PatientDetails6State extends State<PatientDetails6> {
   final _formKey = GlobalKey<FormState>();
+  final firestoreService = FirestoreService();
 
   @override
   Widget build(BuildContext context) {
@@ -154,11 +156,9 @@ class _PatientDetails6State extends State<PatientDetails6> {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
                       p.update();
-                      // Navigate to next page
-                      // Navigator.push(context, MaterialPageRoute(builder: (_) => NextPage()));
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const HomePage()), // replace NextPage with your widget
+                        MaterialPageRoute(builder: (context) => const HomePage()),
                       );
                     }
                   },

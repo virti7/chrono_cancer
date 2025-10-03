@@ -1,6 +1,9 @@
 import 'package:chronocancer_ai/features/doctor/pages/analytics_dashboard_page.dart';
+import 'package:chronocancer_ai/features/patient/pages/appointment_booking_page.dart';
+import 'package:chronocancer_ai/features/patient/pages/cancer_awareness_page.dart';
 //import 'package:chronocancer_ai/features/doctor/pages/patient_detail_page.dart';
 import 'package:chronocancer_ai/features/patient/pages/family_page.dart';
+import 'package:chronocancer_ai/features/patient/pages/schedule_checkup_page.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:dotted_border/dotted_border.dart';
@@ -24,6 +27,9 @@ class HomePage extends StatelessWidget {
         fontFamily: 'Roboto',
       ),
       home: const ChronoCancerHomePage(),
+      routes:{
+        '/scheduling':(context) => const SchedulingPage(),
+      },
     );
   }
 }
@@ -170,15 +176,15 @@ class HomePageContent extends StatelessWidget {
           children: [
             _buildWelcomeSection(),
             const SizedBox(height: 20),
-            _buildNavigationChips(),
+            _buildNavigationChips(context),
             const SizedBox(height: 20),
-            _buildBloodPressureCheckDue(),
+            _buildBloodPressureCheckDue(context),
             const SizedBox(height: 20),
-            _buildCancerTypesSection(),
+            _buildCancerTypesSection(context),
             const SizedBox(height: 20),
             _buildHealthMonitoringSection(),
             const SizedBox(height: 20),
-            _buildTopDoctorSection(),
+            _buildTopDoctorSection(context),
             const SizedBox(height: 20),
             _buildAIReportAnalyzerSection(),
             const SizedBox(height: 20),
@@ -206,17 +212,28 @@ class HomePageContent extends StatelessWidget {
     );
   }
 
-  Widget _buildNavigationChips() {
+  Widget _buildNavigationChips(BuildContext context) {
     return Row(
       children: [
         Expanded(
           child: AspectRatio(
             aspectRatio: 1,
-            child: _buildChip(Icons.calendar_today, 'Reminders',
-                Colors.purple[100]!, Colors.purple),
+            child: InkWell(   // 👈 wrap here
+              onTap: () {
+                Navigator.pushNamed(context, '/reminders'); // 👈 your route
+              },
+              borderRadius: BorderRadius.circular(12), // nice ripple effect
+              child: _buildChip(
+                Icons.calendar_today,
+                'Reminders',
+                Colors.purple[100]!,
+                Colors.purple,
+              ),
+            ),
           ),
         ),
         const SizedBox(width: 8),
+
         Expanded(
           child: AspectRatio(
             aspectRatio: 1,
@@ -236,10 +253,21 @@ class HomePageContent extends StatelessWidget {
         Expanded(
           child: AspectRatio(
             aspectRatio: 1,
-            child: _buildChip(Icons.calendar_month, 'Appointments',
-                Colors.pink[100]!, Colors.pink),
+            child: InkWell(
+              onTap: () {
+                Navigator.pushNamed(context, '/scheduling'); // 👈 your route
+              },
+              borderRadius: BorderRadius.circular(12), // ripple effect
+              child: _buildChip(
+                Icons.calendar_month,
+                'Appointments',
+                Colors.pink[100]!,
+                Colors.pink,
+              ),
+            ),
           ),
         ),
+
       ],
     );
   }
@@ -270,7 +298,7 @@ class HomePageContent extends StatelessWidget {
     );
   }
 
-  Widget _buildBloodPressureCheckDue() {
+  Widget _buildBloodPressureCheckDue(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -301,7 +329,7 @@ class HomePageContent extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AppointmentBookingScreen())),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
                     shape: RoundedRectangleBorder(
@@ -321,7 +349,7 @@ class HomePageContent extends StatelessWidget {
     );
   }
 
-Widget _buildCancerTypesSection() {
+Widget _buildCancerTypesSection(BuildContext context) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -333,7 +361,12 @@ Widget _buildCancerTypesSection() {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CancerAwarenessPage()),
+              );
+            },
             child: const Text(
               'See all',
               style: TextStyle(color: Colors.deepPurple),
@@ -545,7 +578,7 @@ Widget _buildCancerTypeCard(String imagePath) {
     );
   }
 
-  Widget _buildTopDoctorSection() {
+  Widget _buildTopDoctorSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -557,7 +590,12 @@ Widget _buildCancerTypeCard(String imagePath) {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => DoctorsListScreen()),
+                );
+              },
               child: const Text('See all',
                   style: TextStyle(color: Colors.deepPurple)),
             ),

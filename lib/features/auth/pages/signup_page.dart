@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SignupPage extends StatefulWidget {
   final String role;
-  const SignupPage({Key? key, required this.role}) : super(key: key);
+  const SignupPage({super.key, required this.role});
 
   @override
   State<SignupPage> createState() => _SignupPageState();
@@ -57,7 +57,7 @@ Future<void> _signUp() async {
     if (widget.role.toLowerCase() == 'doctor') {
       Navigator.pushReplacementNamed(context, '/doctorsHome');
     } else if (widget.role.toLowerCase() == 'patient') {
-      Navigator.pushReplacementNamed(context, '/patientHome');
+      Navigator.pushReplacementNamed(context, '/consentPage');
     } else if (widget.role.toLowerCase() == 'asha worker') {
       Navigator.pushReplacementNamed(context, '/workerHome');
     }

@@ -40,11 +40,22 @@ dependencies:
   cloud_firestore: ^6.0.2
   syncfusion_flutter_gauges: ^24.2.9
   font_awesome_flutter: ^10.7.0
+<<<<<<< HEAD
   shared_preferences: ^2.2.3
   intl: ^0.18.1 # For date formatting
   file_picker: ^8.0.5  
   open_filex: ^4.3.4
   image_picker: ^1.1.2
+=======
+  shared_preferences: ^2.1.1
+  provider: ^6.0.6
+  image_picker: ^1.1.0
+  url_launcher: ^6.1.10
+  flutter_multi_select_items: ^0.4.3
+  flutter_rating_bar: ^4.0.1
+  flutter_datetime_picker: ^1.5.1
+  #fluttertoast: ^8.2.4
+>>>>>>> 68d62dc9791755b822091cae84bdcf446dbc566f
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8          # If you need authentication

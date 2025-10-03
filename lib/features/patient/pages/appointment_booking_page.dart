@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-// You might need to add this dependency to your pubspec.yaml:
+// Add this dependency in pubspec.yaml:
 // table_calendar: ^3.0.9
 
 class SchedulingPage extends StatefulWidget {
@@ -42,7 +42,7 @@ class _SchedulingPageState extends State<SchedulingPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
           onPressed: () {
-            // Navigator.pop(context);
+            Navigator.pop(context);
           },
         ),
         actions: [
@@ -54,18 +54,17 @@ class _SchedulingPageState extends State<SchedulingPage> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Card(
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                color: const Color(0xFFF0F4F8), // Light grey background
+                color: const Color(0xFFF0F4F8),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TableCalendar(
@@ -73,13 +72,11 @@ class _SchedulingPageState extends State<SchedulingPage> {
                     lastDay: DateTime.utc(2025, 12, 31),
                     focusedDay: _focusedDay,
                     calendarFormat: _calendarFormat,
-                    selectedDayPredicate: (day) {
-                      return isSameDay(_selectedDay, day);
-                    },
+                    selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
                     onDaySelected: (selectedDay, focusedDay) {
                       setState(() {
                         _selectedDay = selectedDay;
-                        _focusedDay = focusedDay; // update `_focusedDay` here as well
+                        _focusedDay = focusedDay;
                       });
                     },
                     onFormatChanged: (format) {
@@ -89,9 +86,7 @@ class _SchedulingPageState extends State<SchedulingPage> {
                         });
                       }
                     },
-                    onPageChanged: (focusedDay) {
-                      _focusedDay = focusedDay;
-                    },
+                    onPageChanged: (focusedDay) => _focusedDay = focusedDay,
                     eventLoader: _getEventsForDay,
                     calendarStyle: CalendarStyle(
                       todayDecoration: BoxDecoration(
@@ -103,7 +98,7 @@ class _SchedulingPageState extends State<SchedulingPage> {
                         shape: BoxShape.circle,
                       ),
                       markerDecoration: const BoxDecoration(
-                        color: Color(0xFF4CAF50), // Green for events
+                        color: Color(0xFF4CAF50),
                         shape: BoxShape.circle,
                       ),
                       weekendTextStyle: TextStyle(color: Colors.red[600]),
@@ -122,7 +117,11 @@ class _SchedulingPageState extends State<SchedulingPage> {
                 ),
               ),
             ),
-            Padding(
+          ),
+
+          // Selected Day Appointments
+          SliverToBoxAdapter(
+            child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Text(
                 'Appointments for ${_selectedDay != null ? '${_selectedDay!.day}/${_selectedDay!.month}/${_selectedDay!.year}' : 'Selected Day'}',
@@ -133,69 +132,89 @@ class _SchedulingPageState extends State<SchedulingPage> {
                 ),
               ),
             ),
-            _selectedDay != null && _getEventsForDay(_selectedDay!).isNotEmpty
-                ? ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: _getEventsForDay(_selectedDay!).length,
-                    itemBuilder: (context, index) {
-                      return AppointmentCard(
-                        appointmentTitle: _getEventsForDay(_selectedDay!)[index],
-                        doctorName: 'Dr. Marcus Hieb', // Example doctor
-                        time: '10:00 AM - 11:00 AM',
-                        status: 'Confirmed',
-                        color: Colors.blueAccent,
-                      );
-                    },
-                  )
-                : Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
-                    child: Center(
-                      child: Text(
-                        _selectedDay != null
-                            ? 'No appointments scheduled for this day.'
-                            : 'Select a day to view appointments.',
-                        style: const TextStyle(fontSize: 16, color: Colors.grey),
-                      ),
-                    ),
+          ),
+
+          if (_selectedDay != null && _getEventsForDay(_selectedDay!).isNotEmpty)
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  return AppointmentCard(
+                    appointmentTitle: _getEventsForDay(_selectedDay!)[index],
+                    doctorName: 'Dr. Marcus Hieb',
+                    time: '10:00 AM - 11:00 AM',
+                    status: 'Confirmed',
+                    color: Colors.blueAccent,
+                  );
+                },
+                childCount: _getEventsForDay(_selectedDay!).length,
+              ),
+            )
+          else
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+                child: Center(
+                  child: Text(
+                    _selectedDay != null
+                        ? 'No appointments scheduled for this day.'
+                        : 'Select a day to view appointments.',
+                    style: const TextStyle(fontSize: 16, color: Colors.grey),
                   ),
-            Padding(
+                ),
+              ),
+            ),
+
+          // Upcoming Appointments
+          SliverToBoxAdapter(
+            child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: Text(
+              child: const Text(
                 'Upcoming Appointments',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
                 ),
               ),
             ),
-            AppointmentCard(
-              appointmentTitle: 'Annual Check-up',
-              doctorName: 'Dr. Sarah Johnson',
-              time: 'Tomorrow, 9:00 AM - 10:00 AM',
-              status: 'Confirmed',
-              color: const Color(0xFF4CAF50), // Green for confirmed
+          ),
+          SliverToBoxAdapter(
+            child: Column(
+              children: const [
+                AppointmentCard(
+                  appointmentTitle: 'Annual Check-up',
+                  doctorName: 'Dr. Sarah Johnson',
+                  time: 'Tomorrow, 9:00 AM - 10:00 AM',
+                  status: 'Confirmed',
+                  color: Color(0xFF4CAF50),
+                ),
+                AppointmentCard(
+                  appointmentTitle: 'Cardiology Follow-up',
+                  doctorName: 'Dr. Elena Maria',
+                  time: 'June 25, 2:00 PM - 3:00 PM',
+                  status: 'Pending',
+                  color: Colors.orange,
+                ),
+              ],
             ),
-            AppointmentCard(
-              appointmentTitle: 'Cardiology Follow-up',
-              doctorName: 'Dr. Elena Maria',
-              time: 'June 25, 2:00 PM - 3:00 PM',
-              status: 'Pending',
-              color: Colors.orange, // Orange for pending
-            ),
-            Padding(
+          ),
+
+          // My Doctors
+          SliverToBoxAdapter(
+            child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: Text(
+              child: const Text(
                 'My Doctors',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
                 ),
               ),
             ),
-            SizedBox(
+          ),
+          SliverToBoxAdapter(
+            child: SizedBox(
               height: 120,
               child: ListView(
                 scrollDirection: Axis.horizontal,
@@ -204,55 +223,32 @@ class _SchedulingPageState extends State<SchedulingPage> {
                   DoctorAvatar(
                     doctorName: 'Dr. Marcus H.',
                     specialty: 'Cardiologist',
-                    imageUrl: 'https://images.unsplash.com/photo-1612349317031-6415f36e4f1d?fit=crop&w=400&q=80',
+                    imageUrl:
+                        'https://images.unsplash.com/photo-1612349317031-6415f36e4f1d?fit=crop&w=400&q=80',
                   ),
                   DoctorAvatar(
                     doctorName: 'Dr. Elena M.',
                     specialty: 'Neurologist',
-                    imageUrl: 'https://images.unsplash.com/photo-1559839734-2b7194cb90ad?fit=crop&w=400&q=80',
+                    imageUrl:
+                        'https://images.unsplash.com/photo-1559839734-2b7194cb90ad?fit=crop&w=400&q=80',
                   ),
                   DoctorAvatar(
                     doctorName: 'Dr. Steve J.',
                     specialty: 'Oncologist',
-                    imageUrl: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?fit=crop&w=400&q=80',
+                    imageUrl:
+                        'https://images.unsplash.com/photo-1622253692010-333f2da6031d?fit=crop&w=400&q=80',
                   ),
                   DoctorAvatar(
                     doctorName: 'Dr. Sarah K.',
                     specialty: 'Pediatrician',
-                    imageUrl: 'https://images.unsplash.com/photo-1579482591745-f095759160a2?fit=crop&w=400&q=80',
+                    imageUrl:
+                        'https://images.unsplash.com/photo-1579482591745-f095759160a2?fit=crop&w=400&q=80',
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 20),
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Colors.blueAccent,
-        unselectedItemColor: Colors.grey,
-        currentIndex: 2, // Assuming this is the 'Appointments' tab
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.medical_services_outlined),
-            label: 'Emergency',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: 'Appointments',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.book_online),
-            label: 'Learn',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: 'Profile',
-          ),
+          SliverToBoxAdapter(child: const SizedBox(height: 20)),
         ],
       ),
     );
@@ -275,6 +271,20 @@ class AppointmentCard extends StatelessWidget {
     required this.color,
   }) : super(key: key);
 
+  void _openDetails(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AppointmentDetailsPage(
+          appointmentTitle: appointmentTitle,
+          doctorName: doctorName,
+          time: time,
+          status: status,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -289,12 +299,14 @@ class AppointmentCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  appointmentTitle,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                Flexible(
+                  child: Text(
+                    appointmentTitle,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
                   ),
                 ),
                 Container(
@@ -319,9 +331,12 @@ class AppointmentCard extends StatelessWidget {
               children: [
                 const Icon(Icons.person_outline, size: 18, color: Colors.grey),
                 const SizedBox(width: 4),
-                Text(
-                  doctorName,
-                  style: const TextStyle(fontSize: 14, color: Colors.grey),
+                Expanded(
+                  child: Text(
+                    doctorName,
+                    style: const TextStyle(fontSize: 14, color: Colors.grey),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 const SizedBox(width: 16),
                 const Icon(Icons.access_time, size: 18, color: Colors.grey),
@@ -336,9 +351,7 @@ class AppointmentCard extends StatelessWidget {
             Align(
               alignment: Alignment.bottomRight,
               child: OutlinedButton(
-                onPressed: () {
-                  // Handle view details or reschedule
-                },
+                onPressed: () => _openDetails(context),
                 style: OutlinedButton.styleFrom(
                   side: const BorderSide(color: Colors.blueAccent),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -348,6 +361,95 @@ class AppointmentCard extends StatelessWidget {
                   style: TextStyle(color: Colors.blueAccent),
                 ),
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class AppointmentDetailsPage extends StatelessWidget {
+  final String appointmentTitle;
+  final String doctorName;
+  final String time;
+  final String status;
+
+  const AppointmentDetailsPage({
+    Key? key,
+    required this.appointmentTitle,
+    required this.doctorName,
+    required this.time,
+    required this.status,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Appointment Details',
+          style: TextStyle(color: Colors.black),
+        ),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.black),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              appointmentTitle,
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                const Icon(Icons.person_outline, size: 20, color: Colors.grey),
+                const SizedBox(width: 8),
+                Text(
+                  doctorName,
+                  style: const TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                const Icon(Icons.access_time, size: 20, color: Colors.grey),
+                const SizedBox(width: 8),
+                Text(
+                  time,
+                  style: const TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                const Icon(Icons.check_circle_outline, size: 20, color: Colors.grey),
+                const SizedBox(width: 8),
+                Text(
+                  status,
+                  style: TextStyle(
+                      fontSize: 16,
+                      color: status == 'Confirmed' ? Colors.green : Colors.orange),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Details:',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'This is a detailed description of the appointment. Here you can include '
+              'information such as preparation instructions, location, notes from the doctor, '
+              'or any other important details related to this check-up.',
+              style: TextStyle(fontSize: 16),
             ),
           ],
         ),

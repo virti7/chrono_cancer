@@ -67,7 +67,10 @@ class RiskQueueScreen extends StatefulWidget {
 
 class _RiskQueueScreenState extends State<RiskQueueScreen> {
   RiskLevel? _selectedFilter;
-  int _selectedNavIndex = 2; // Default to Risk Queue
+  bool _isSearching = false;
+  String _searchQuery = '';
+
+  final TextEditingController _searchController = TextEditingController();
 
   final List<Patient> _patients = [
     Patient(
@@ -122,20 +125,36 @@ class _RiskQueueScreenState extends State<RiskQueueScreen> {
   ];
 
   List<Patient> get _filteredPatients {
-    if (_selectedFilter == null) {
-      return List.from(_patients)
-        ..sort((a, b) => b.riskScore.compareTo(a.riskScore));
+    List<Patient> filtered = _patients;
+
+    if (_selectedFilter != null) {
+      filtered =
+          filtered.where((p) => p.riskLevel == _selectedFilter).toList();
     }
-    return _patients
-        .where((patient) => patient.riskLevel == _selectedFilter)
-        .toList()
-      ..sort((a, b) => b.riskScore.compareTo(a.riskScore));
+
+    if (_searchQuery.isNotEmpty) {
+      filtered = filtered
+          .where((p) =>
+              p.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+              p.condition.toLowerCase().contains(_searchQuery.toLowerCase()))
+          .toList();
+    }
+
+    // Sort by riskScore descending
+    filtered.sort((a, b) => b.riskScore.compareTo(a.riskScore));
+
+    return filtered;
   }
 
-  void _onNavBarTap(int index) {
+  void _toggleSearch() {
     setState(() {
-      _selectedNavIndex = index;
-      // Add navigation logic here if needed
+      if (_isSearching) {
+        _isSearching = false;
+        _searchQuery = '';
+        _searchController.clear();
+      } else {
+        _isSearching = true;
+      }
     });
   }
 
@@ -143,10 +162,9 @@ class _RiskQueueScreenState extends State<RiskQueueScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF0F2F5),
-      bottomNavigationBar: _buildBottomNavBar(),
       body: CustomScrollView(
         slivers: [
-          // ----------------- Title + Search -----------------
+          // ----------------- Title / Search -----------------
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0)
@@ -154,21 +172,49 @@ class _RiskQueueScreenState extends State<RiskQueueScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'Risk Queue',
-                    style: GoogleFonts.poppins(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.indigo,
-                    ),
-                  ),
+                  _isSearching
+                      ? Expanded(
+                          child: TextField(
+                            controller: _searchController,
+                            autofocus: true,
+                            decoration: InputDecoration(
+                              hintText: 'Search by name or condition',
+                              fillColor: Colors.white,
+                              filled: true,
+                              prefixIcon: const Icon(Icons.search),
+                              suffixIcon: IconButton(
+                                icon: const Icon(Icons.clear),
+                                onPressed: () {
+                                  setState(() {
+                                    _searchQuery = '';
+                                    _searchController.clear();
+                                  });
+                                },
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide.none,
+                              ),
+                            ),
+                            onChanged: (value) {
+                              setState(() {
+                                _searchQuery = value;
+                              });
+                            },
+                          ),
+                        )
+                      : Text(
+                          'Risk Queue',
+                          style: GoogleFonts.poppins(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.indigo,
+                          ),
+                        ),
                   IconButton(
-                    icon: const Icon(Icons.search, size: 28),
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Search pressed')),
-                      );
-                    },
+                    icon: Icon(_isSearching ? Icons.close : Icons.search,
+                        size: 28),
+                    onPressed: _toggleSearch,
                   ),
                 ],
               ),
@@ -227,25 +273,6 @@ class _RiskQueueScreenState extends State<RiskQueueScreen> {
           );
         }).toList(),
       ),
-    );
-  }
-
-  Widget _buildBottomNavBar() {
-    return BottomNavigationBar(
-      currentIndex: _selectedNavIndex,
-      onTap: _onNavBarTap,
-      type: BottomNavigationBarType.fixed,
-      backgroundColor: Colors.white,
-      selectedItemColor: Colors.indigo,
-      unselectedItemColor: Colors.grey,
-      showSelectedLabels: true,
-      showUnselectedLabels: true,
-      items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-        BottomNavigationBarItem(icon: Icon(Icons.analytics), label: 'Analytics'),
-        BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: 'Risk Queue'),
-        BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Patient Detail'),
-      ],
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:chronocancer_ai/features/patient/pages/patient_details_1.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -158,7 +159,10 @@ class _PrivacyConsentScreenState extends State<PrivacyConsentScreen> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, '/patientHome');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => PatientDetails1()), // replace with your widget
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF2196F3), // Blue theme

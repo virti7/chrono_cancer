@@ -1,32 +1,5 @@
 import 'package:flutter/material.dart';
-
-void main() {
-  runApp(const MyApp());
-}
-
-/// ✅ Converted MyApp to StatefulWidget
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Patient Detail App',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: Colors.white,
-        fontFamily: 'Roboto',
-      ),
-      home: const PatientDetailPage(),
-    );
-  }
-}
+import 'package:chronocancer_ai/features/auth/pages/login_page.dart'; // ✅ Import your real login page
 
 class PatientDetailPage extends StatefulWidget {
   const PatientDetailPage({super.key});
@@ -36,120 +9,186 @@ class PatientDetailPage extends StatefulWidget {
 }
 
 class _PatientDetailPageState extends State<PatientDetailPage> {
-  String patientName = 'John Doe';
-  int age = 32;
-  String gender = 'Male';
-  String currentCondition =
-      'Fever, cough, and fatigue for 3 days. Experiencing mild headaches.';
-  String medicalHistory =
-      'Asthma (diagnosed childhood), seasonal allergies. No major surgeries.';
-  String riskLevel = 'Moderate (due to pre-existing asthma during flu season)';
+  String _patientName = 'John Doe';
+  String _patientEmail = 'john.doe@example.com';
+  String _patientPhone = '+1 (555) 123-4567';
+  String _patientAddress = '123 Health Lane, Wellness City';
 
-  // Notes
-  final TextEditingController _noteController = TextEditingController();
-  List<Map<String, dynamic>> _notes = [];
-
-  // Appointments
-  String lastAppointment = "2023-10-26 at 3:00 PM";
-  String nextAppointment = "2023-11-10 at 11:30 AM";
-
-  void _addNote() {
-    if (_noteController.text.trim().isEmpty) return;
-    setState(() {
-      _notes.insert(0, {
-        "text": _noteController.text.trim(),
-        "time": DateTime.now(),
-      });
-      _noteController.clear();
-    });
-  }
-
-  void _deleteNoteAt(int index) {
-    setState(() {
-      _notes.removeAt(index);
-    });
-  }
+  bool _notificationsEnabled = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(patientName),
-        centerTitle: false,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.more_vert),
-            onPressed: () {},
-          ),
-        ],
+        title: Text(_patientName),
+        backgroundColor: Colors.teal,
       ),
       body: SafeArea(
-        child: Stack(
-          children: [
-            SingleChildScrollView(
-              padding: const EdgeInsets.only(bottom: 120.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildPatientHeader(),
-                  _buildInfoCard(
-                    title: 'Current Condition',
-                    content: currentCondition,
-                    color: const Color(0xFF81C784),
-                  ),
-                  _buildInfoCard(
-                    title: 'Medical History',
-                    content: medicalHistory,
-                    color: const Color(0xFF64B5F6),
-                  ),
-                  _buildInfoCard(
-                    title: 'Risk Level',
-                    content: riskLevel,
-                    color: const Color(0xFFFFB74D),
-                    trailingIcon: Icons.warning_amber,
-                  ),
-                  _buildAppointmentSection(),
-                  _buildNotesSection(),
-                  const SizedBox(height: 20),
-                ],
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Column(
+                  children: [
+                    CircleAvatar(
+                      radius: 60,
+                      backgroundImage: const NetworkImage(
+                          'https://cdn.pixabay.com/photo/2016/11/18/23/38/man-1837130_1280.jpg'),
+                      backgroundColor: Colors.teal[100],
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      _patientName,
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineSmall
+                          ?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.teal[800],
+                          ),
+                    ),
+                    Text(
+                      'Patient ID: 12345',
+                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            _buildActionButtons(),
-          ],
+              const SizedBox(height: 30),
+              _buildSectionTitle(context, 'Personal Information'),
+              _buildProfileInfoRow(
+                  context, Icons.email, _patientEmail, 'Email'),
+              _buildProfileInfoRow(
+                  context, Icons.phone, _patientPhone, 'Phone'),
+              _buildProfileInfoRow(
+                  context, Icons.location_on, _patientAddress, 'Address'),
+              const SizedBox(height: 20),
+
+              // ✅ Edit Profile Button
+              ElevatedButton.icon(
+                onPressed: () async {
+                  final updatedInfo = await Navigator.push<Map<String, String>>(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => EditProfilePage(
+                              name: _patientName,
+                              email: _patientEmail,
+                              phone: _patientPhone,
+                              address: _patientAddress,
+                            )),
+                  );
+                  if (updatedInfo != null) {
+                    setState(() {
+                      _patientName = updatedInfo['name']!;
+                      _patientEmail = updatedInfo['email']!;
+                      _patientPhone = updatedInfo['phone']!;
+                      _patientAddress = updatedInfo['address']!;
+                    });
+                  }
+                },
+                icon: const Icon(Icons.edit),
+                label: const Text('Edit Profile'),
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 50),
+                ),
+              ),
+
+              const SizedBox(height: 30),
+              _buildSectionTitle(context, 'App Settings'),
+              ListTile(
+                leading: const Icon(Icons.notifications, color: Colors.teal),
+                title: const Text('Enable Notifications'),
+                trailing: Switch(
+                  value: _notificationsEnabled,
+                  onChanged: (bool value) {
+                    setState(() {
+                      _notificationsEnabled = value;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text(
+                                'Notifications ${value ? 'enabled' : 'disabled'}')),
+                      );
+                    });
+                  },
+                  activeColor: Colors.teal,
+                ),
+                onTap: () {
+                  setState(() {
+                    _notificationsEnabled = !_notificationsEnabled;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content: Text(
+                              'Notifications ${_notificationsEnabled ? 'enabled' : 'disabled'}')),
+                    );
+                  });
+                },
+              ),
+              _buildSettingOption(
+                  context, Icons.security, 'Change Password', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ChangePasswordPage()),
+                );
+              }),
+              _buildSettingOption(
+                  context, Icons.info_outline, 'About Us', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AboutUsPage()),
+                );
+              }),
+
+              // ✅ Logout Button
+              _buildSettingOption(context, Icons.logout, 'Logout', () {
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                      builder: (_) =>
+                          const LoginPage(role: "patient")), // ✅ pass role
+                  (route) => false,
+                );
+              }, textColor: Colors.red),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  /// Patient Header
-  Widget _buildPatientHeader() {
+  Widget _buildSectionTitle(BuildContext context, String title) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.only(bottom: 15.0),
+      child: Text(
+        title,
+        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Colors.teal[800],
+            ),
+      ),
+    );
+  }
+
+  Widget _buildProfileInfoRow(
+      BuildContext context, IconData icon, String value, String label) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const CircleAvatar(
-            radius: 40,
-            backgroundColor: Color(0xFFE3F2FD),
-            child: Icon(Icons.person, size: 50, color: Color(0xFF64B5F6)),
-          ),
-          const SizedBox(width: 16),
+          Icon(icon, color: Colors.teal, size: 24),
+          const SizedBox(width: 15),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  patientName,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: Colors.grey[800],
-                      ),
+                  label,
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                 ),
-                const SizedBox(height: 4),
                 Text(
-                  '$age years old | $gender',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Colors.grey[600],
-                      ),
+                  value,
+                  style: TextStyle(fontSize: 16, color: Colors.grey[900]),
                 ),
               ],
             ),
@@ -159,234 +198,134 @@ class _PatientDetailPageState extends State<PatientDetailPage> {
     );
   }
 
-  /// Reusable Info Card
-  Widget _buildInfoCard({
-    required String title,
-    required String content,
-    required Color color,
-    IconData? trailingIcon,
-  }) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 5,
-            spreadRadius: 2,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 5,
-                height: 20,
-                decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey[700],
-                      ),
-                ),
-              ),
-              if (trailingIcon != null)
-                Icon(trailingIcon, color: color, size: 24),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            content,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Colors.grey[700],
-                  height: 1.5,
-                ),
-          ),
-        ],
+  Widget _buildSettingOption(BuildContext context, IconData icon, String title,
+      VoidCallback onTap,
+      {Color? textColor}) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      child: ListTile(
+        leading: Icon(icon, color: textColor ?? Colors.teal),
+        title: Text(
+          title,
+          style: TextStyle(fontSize: 16, color: textColor ?? Colors.grey[800]),
+        ),
+        trailing:
+            Icon(Icons.arrow_forward_ios, size: 18, color: Colors.grey[400]),
+        onTap: onTap,
       ),
     );
   }
+}
 
-  /// Appointment Section
-  Widget _buildAppointmentSection() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 5,
-            spreadRadius: 2,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("Appointments",
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue[700],
-                  )),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text("Last Appointment:",
-                  style: TextStyle(color: Colors.grey[700], fontSize: 16)),
-              Flexible(
-                child: Text(lastAppointment,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w600, color: Colors.black),
-                    overflow: TextOverflow.ellipsis),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text("Upcoming Appointment:",
-                  style: TextStyle(color: Colors.grey[700], fontSize: 16)),
-              Flexible(
-                child: Text(nextAppointment,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w600, color: Colors.black),
-                    overflow: TextOverflow.ellipsis),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+/// ------------------------
+/// Supporting Pages
+/// ------------------------
+
+class EditProfilePage extends StatefulWidget {
+  final String name, email, phone, address;
+  const EditProfilePage(
+      {super.key,
+      required this.name,
+      required this.email,
+      required this.phone,
+      required this.address});
+
+  @override
+  State<EditProfilePage> createState() => _EditProfilePageState();
+}
+
+class _EditProfilePageState extends State<EditProfilePage> {
+  late TextEditingController nameController;
+  late TextEditingController emailController;
+  late TextEditingController phoneController;
+  late TextEditingController addressController;
+
+  @override
+  void initState() {
+    super.initState();
+    nameController = TextEditingController(text: widget.name);
+    emailController = TextEditingController(text: widget.email);
+    phoneController = TextEditingController(text: widget.phone);
+    addressController = TextEditingController(text: widget.address);
   }
 
-  /// Notes Section
-  Widget _buildNotesSection() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 5,
-            spreadRadius: 2,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("Recent Notes",
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue[700],
-                  )),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _noteController,
-            decoration: InputDecoration(
-              hintText: "Write a note...",
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            ),
-            maxLines: 2,
-          ),
-          const SizedBox(height: 10),
-          Align(
-            alignment: Alignment.centerRight,
-            child: ElevatedButton.icon(
-              onPressed: _addNote,
-              icon: const Icon(Icons.add),
-              label: const Text("Add Note"),
-            ),
-          ),
-          const Divider(),
-          ..._notes.asMap().entries.map((entry) {
-            int index = entry.key;
-            var note = entry.value;
-            return ListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Text(note["text"]),
-              subtitle: Text(
-                "Added on: ${note["time"].toString().substring(0, 16)}",
-                style: const TextStyle(fontSize: 12, color: Colors.grey),
-              ),
-              trailing: IconButton(
-                icon: const Icon(Icons.delete, color: Colors.red),
-                onPressed: () => _deleteNoteAt(index),
-              ),
-            );
-          }).toList(),
-        ],
-      ),
-    );
+  @override
+  void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    phoneController.dispose();
+    addressController.dispose();
+    super.dispose();
   }
 
-  /// Bottom action buttons (Edit & Schedule)
-  Widget _buildActionButtons() {
-    return Positioned(
-      bottom: 0,
-      left: 0,
-      right: 0,
-      child: Container(
+  void _save() {
+    Navigator.pop(context, {
+      'name': nameController.text.trim(),
+      'email': emailController.text.trim(),
+      'phone': phoneController.text.trim(),
+      'address': addressController.text.trim(),
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar:
+          AppBar(title: const Text("Edit Profile"), backgroundColor: Colors.teal),
+      body: Padding(
         padding: const EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
-              spreadRadius: 2,
-              blurRadius: 5,
-              offset: const Offset(0, -3),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+        child: Column(
           children: [
-            Expanded(
-              child: OutlinedButton.icon(
-                onPressed: () {},
-                icon: const Icon(Icons.edit),
-                label: const Text('Edit Details'),
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: ElevatedButton.icon(
-                onPressed: () {},
-                icon: const Icon(Icons.calendar_today_outlined),
-                label: const Text('Schedule'),
-              ),
-            ),
+            TextField(
+                controller: nameController,
+                decoration: const InputDecoration(labelText: 'Name')),
+            const SizedBox(height: 10),
+            TextField(
+                controller: emailController,
+                decoration: const InputDecoration(labelText: 'Email')),
+            const SizedBox(height: 10),
+            TextField(
+                controller: phoneController,
+                decoration: const InputDecoration(labelText: 'Phone')),
+            const SizedBox(height: 10),
+            TextField(
+                controller: addressController,
+                decoration: const InputDecoration(labelText: 'Address')),
+            const SizedBox(height: 20),
+            ElevatedButton(onPressed: _save, child: const Text("Save Changes")),
           ],
         ),
       ),
+    );
+  }
+}
+
+class ChangePasswordPage extends StatelessWidget {
+  const ChangePasswordPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+          title: const Text("Change Password"), backgroundColor: Colors.teal),
+      body: const Center(
+          child: Text("Change Password Page (implement as needed)")),
+    );
+  }
+}
+
+class AboutUsPage extends StatelessWidget {
+  const AboutUsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar:
+          AppBar(title: const Text("About Us"), backgroundColor: Colors.teal),
+      body: const Center(
+          child: Text("About Us Page (info about the app/company)")),
     );
   }
 }

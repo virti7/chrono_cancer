@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,91 +32,71 @@ class _TrainingHubScreenState extends State<TrainingHubScreen> {
   double progressModule1 = 0.78;
   double progressModule2 = 0.25;
 
+  // YouTube URLs
+  final String youtubeUrlContinue = 'https://www.youtube.com/watch?v=J4Y9i9TQpS0';
+  final String youtubeUrlStart = 'https://www.youtube.com/watch?v=_ipvzZ987T8';
+
+  Future<void> _launchYouTube(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      throw 'Could not launch $url';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.green.shade50,
-              shape: BoxShape.circle,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Training Hub',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
+                _buildProgressCard(),
+                const SizedBox(height: 32),
+                const Text(
+                  'Achievement Badges',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
+                _buildAchievementBadgesGrid(),
+                const SizedBox(height: 32),
+                const Text(
+                  'Available Modules',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
+                _buildModuleCard(
+                  title: 'Advanced BP Monitoring',
+                  description: 'Learn advanced techniques for accurate readings',
+                  progress: progressModule1,
+                  buttonText: 'Continue',
+                  buttonColor: Colors.green,
+                  icon: Icons.favorite_border,
+                  iconColor: Colors.green,
+                  onButtonPressed: () => _launchYouTube(youtubeUrlContinue),
+                ),
+                const SizedBox(height: 16),
+                _buildModuleCard(
+                  title: 'AI-Powered Oral Health Screening',
+                  description: 'Master mobile photography for oral health assessment',
+                  progress: progressModule2,
+                  buttonText: 'Start',
+                  buttonColor: Colors.blue.shade700,
+                  icon: Icons.camera_alt_outlined,
+                  iconColor: Colors.blue.shade700,
+                  onButtonPressed: () => _launchYouTube(youtubeUrlStart),
+                ),
+              ],
             ),
-            child: const Icon(Icons.favorite_border, color: Colors.green),
           ),
         ),
-        title: const Text(
-          'Asha Worker Dashboard',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.menu, color: Colors.black),
-            onPressed: () {},
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Training Hub',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              _buildProgressCard(),
-              const SizedBox(height: 32),
-              const Text(
-                'Achievement Badges',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              _buildAchievementBadgesGrid(),
-              const SizedBox(height: 32),
-              const Text(
-                'Available Modules',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              _buildModuleCard(
-                title: 'Advanced BP Monitoring',
-                description: 'Learn advanced techniques for accurate readings',
-                progress: progressModule1,
-                buttonText: 'Continue',
-                buttonColor: Colors.green,
-                icon: Icons.favorite_border,
-                iconColor: Colors.green,
-              ),
-              const SizedBox(height: 16),
-              _buildModuleCard(
-                title: 'AI-Powered Oral Health Screening',
-                description: 'Master mobile photography for oral health assessment',
-                progress: progressModule2,
-                buttonText: 'Start',
-                buttonColor: Colors.blue.shade700,
-                icon: Icons.camera_alt_outlined,
-                iconColor: Colors.blue.shade700,
-              ),
-            ],
-          ),
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.lightbulb_outline), label: 'Emergency'),
-          BottomNavigationBarItem(icon: Icon(Icons.school_outlined), label: 'Learn'),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profile'),
-        ],
       ),
     );
   }
@@ -187,7 +168,7 @@ class _TrainingHubScreenState extends State<TrainingHubScreen> {
       crossAxisCount: 2,
       crossAxisSpacing: 16,
       mainAxisSpacing: 16,
-      childAspectRatio: 1.4, // taller to fit text
+      childAspectRatio: 1.4,
       children: [
         _buildBadgeCard(
           title: '100 Screenings',
@@ -270,6 +251,7 @@ class _TrainingHubScreenState extends State<TrainingHubScreen> {
     required Color buttonColor,
     required IconData icon,
     required Color iconColor,
+    required VoidCallback onButtonPressed,
   }) {
     return Card(
       elevation: 2,
@@ -317,7 +299,7 @@ class _TrainingHubScreenState extends State<TrainingHubScreen> {
             ),
             const SizedBox(width: 16),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: onButtonPressed,
               style: ElevatedButton.styleFrom(
                 backgroundColor: buttonColor,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),

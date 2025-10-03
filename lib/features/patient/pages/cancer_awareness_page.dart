@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class CancerAwarenessPage extends StatefulWidget {
   const CancerAwarenessPage({Key? key}) : super(key: key);
@@ -23,97 +24,97 @@ class CancerType {
 List<CancerType> dummyCancerTypes = [
   CancerType(
     name: 'Brain Cancer',
-    icon: Icons.lightbulb_outline,
+    icon: FontAwesomeIcons.brain,
     description:
         'Brain cancer is a disease in which abnormal cells form in the brain. It can be primary or metastatic. Symptoms may include headaches, seizures, and vision changes.',
   ),
   CancerType(
     name: 'Liver Cancer',
-    icon: Icons.medical_services_outlined,
+    icon: FontAwesomeIcons.laptopMedical,
     description:
         'Liver cancer begins in the liver. Risk factors include hepatitis, alcohol use, and certain genetic conditions.',
   ),
   CancerType(
     name: 'Colon Cancer',
-    icon: Icons.accessibility_new,
+    icon: FontAwesomeIcons.bandAid,
     description:
         'Colon cancer affects the large intestine. Symptoms may include changes in bowel habits, bleeding, and abdominal discomfort.',
   ),
   CancerType(
     name: 'Lung Cancer',
-    icon: Icons.local_hospital_outlined,
+    icon: FontAwesomeIcons.lungs,
     description:
         'Lung cancer starts in the lungs. Main types are small cell and non-small cell. Smoking is the leading risk factor.',
   ),
   CancerType(
     name: 'Breast Cancer',
-    icon: Icons.woman_outlined,
+    icon: FontAwesomeIcons.ribbon,
     description:
         'Breast cancer forms in breast cells. Symptoms include lumps, size changes, or nipple discharge. Early detection is crucial.',
   ),
   CancerType(
     name: 'Prostate Cancer',
-    icon: Icons.man_outlined,
+    icon: FontAwesomeIcons.mars,
     description:
         'Prostate cancer occurs in the prostate gland. It is common in men and often grows slowly, initially causing no symptoms.',
   ),
   CancerType(
     name: 'Skin Cancer',
-    icon: Icons.sunny,
+    icon: FontAwesomeIcons.sun,
     description:
         'Skin cancer is the abnormal growth of skin cells, often caused by UV exposure. Common types include melanoma, basal cell, and squamous cell carcinoma.',
   ),
   CancerType(
     name: 'Pancreatic Cancer',
-    icon: Icons.local_cafe,
+    icon: FontAwesomeIcons.pills,
     description:
         'Pancreatic cancer begins in the pancreas. It is often diagnosed late and may cause abdominal pain, jaundice, and weight loss.',
   ),
   CancerType(
     name: 'Kidney Cancer',
-    icon: Icons.bedtime,
+    icon: FontAwesomeIcons.handHoldingWater,
     description:
         'Kidney cancer starts in the kidneys. Symptoms may include blood in urine, lower back pain, and fatigue.',
   ),
   CancerType(
     name: 'Ovarian Cancer',
-    icon: Icons.female,
+    icon: FontAwesomeIcons.venus,
     description:
         'Ovarian cancer begins in the ovaries. Symptoms include abdominal bloating, pelvic pain, and changes in bowel habits.',
   ),
   CancerType(
     name: 'Esophageal Cancer',
-    icon: Icons.ramen_dining,
+    icon: FontAwesomeIcons.utensils,
     description:
         'Esophageal cancer affects the esophagus. Symptoms include difficulty swallowing, chest pain, and unintentional weight loss.',
   ),
   CancerType(
     name: 'Bladder Cancer',
-    icon: Icons.bathtub,
+    icon: FontAwesomeIcons.tint,
     description:
         'Bladder cancer develops in the bladder lining. Common symptoms include blood in urine and frequent urination.',
   ),
   CancerType(
     name: 'Thyroid Cancer',
-    icon: Icons.filter_drama,
+    icon: FontAwesomeIcons.userMd,
     description:
         'Thyroid cancer occurs in the thyroid gland. Symptoms include a lump in the neck, voice changes, and difficulty swallowing.',
   ),
   CancerType(
     name: 'Leukemia',
-    icon: Icons.bloodtype,
+    icon: FontAwesomeIcons.droplet,
     description:
         'Leukemia is cancer of the blood-forming tissues. Symptoms include fatigue, frequent infections, and easy bruising or bleeding.',
   ),
   CancerType(
     name: 'Lymphoma',
-    icon: Icons.health_and_safety,
+    icon: FontAwesomeIcons.handHoldingMedical,
     description:
         'Lymphoma affects the lymphatic system. Symptoms include swollen lymph nodes, fever, and unexplained weight loss.',
   ),
   CancerType(
     name: 'Stomach Cancer',
-    icon: Icons.food_bank,
+    icon: FontAwesomeIcons.bandAid,
     description:
         'Stomach cancer begins in the stomach lining. Symptoms include abdominal pain, nausea, and difficulty swallowing.',
   ),
@@ -176,7 +177,6 @@ class _CancerAwarenessPageState extends State<CancerAwarenessPage> {
   Widget _buildCancerTypeCard(BuildContext context, CancerType cancer) {
     return GestureDetector(
       onTap: () {
-        // Show a simple detail dialog instead of a new page
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -184,7 +184,7 @@ class _CancerAwarenessPageState extends State<CancerAwarenessPage> {
             content: SingleChildScrollView(
               child: Column(
                 children: [
-                  Icon(cancer.icon, size: 50, color: Colors.blue.shade700),
+                  FaIcon(cancer.icon, size: 50, color: Colors.blue.shade700),
                   const SizedBox(height: 20),
                   Text(cancer.description),
                 ],
@@ -221,7 +221,7 @@ class _CancerAwarenessPageState extends State<CancerAwarenessPage> {
                 color: Colors.blue.shade50,
                 shape: BoxShape.circle,
               ),
-              child: Icon(
+              child: FaIcon(
                 cancer.icon,
                 color: Colors.blue.shade700,
                 size: 30,

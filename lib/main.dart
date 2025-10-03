@@ -1,7 +1,9 @@
+import 'package:provider/provider.dart';
 import 'package:chronocancer_ai/features/patient/pages/cancer_awareness_page.dart';
 //import 'package:chronocancer_ai/features/patient/pages/doctor_list_page.dart';
 import 'package:chronocancer_ai/features/patient/pages/family_page.dart';
 import 'package:chronocancer_ai/features/patient/pages/health_monitoring_page.dart';
+import 'package:chronocancer_ai/features/patient/pages/patient_details_1.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:chronocancer_ai/features/auth/pages/consent_page.dart';
 import 'package:chronocancer_ai/features/auth/pages/onboarding2_page.dart';
@@ -29,13 +31,20 @@ import 'package:chronocancer_ai/features/worker/pages/worker_home.dart';
 import 'package:chronocancer_ai/firebase_options.dart';
 import 'package:flutter/material.dart';
 
+import 'package:chronocancer_ai/features/patient/pages/patient_data.dart';
+
 void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform
   );
-  runApp(const MyApp());
+    runApp(
+      ChangeNotifierProvider(
+        create: (_) => PatientData(), // <-- your provider
+        child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

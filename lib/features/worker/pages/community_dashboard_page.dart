@@ -4,6 +4,27 @@ void main() {
   runApp(const MyApp());
 }
 
+// Patient model
+class Patient {
+  final String name;
+  final int age;
+  final int harmonyScore;
+  final String lastScreening;
+  final List<String> conditions;
+  final String riskLevel;
+  final Color riskColor;
+
+  Patient({
+    required this.name,
+    required this.age,
+    required this.harmonyScore,
+    required this.lastScreening,
+    required this.conditions,
+    required this.riskLevel,
+    required this.riskColor,
+  });
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -31,72 +52,115 @@ class AshaWorkerDashboard extends StatefulWidget {
 class _AshaWorkerDashboardState extends State<AshaWorkerDashboard> {
   String selectedSort = 'Harmony Score';
 
+  // Sample patient list (keeps UI identical to your original)
+  List<Patient> patients = [
+    Patient(
+      name: 'Rajesh Kumar',
+      age: 45,
+      harmonyScore: 85,
+      lastScreening: '2025-01-10',
+      conditions: ['Hypertension', 'Diabetes Risk'],
+      riskLevel: 'HIGH RISK',
+      riskColor: Colors.red,
+    ),
+    Patient(
+      name: 'Priya Sharma',
+      age: 32,
+      harmonyScore: 65,
+      lastScreening: '2025-01-12',
+      conditions: ['Oral Health'],
+      riskLevel: 'MEDIUM RISK',
+      riskColor: Colors.orange,
+    ),
+    Patient(
+      name: 'Amit Patel',
+      age: 28,
+      harmonyScore: 35,
+      lastScreening: '2025-01-15',
+      conditions: ['Regular Checkup'],
+      riskLevel: 'LOW RISK',
+      riskColor: Colors.green,
+    ),
+  ];
+
+  void _sortPatients() {
+    setState(() {
+      if (selectedSort == 'Harmony Score') {
+        patients.sort((a, b) => b.harmonyScore.compareTo(a.harmonyScore));
+      } else if (selectedSort == 'Age') {
+        patients.sort((a, b) => a.age.compareTo(b.age));
+      } else if (selectedSort == 'Name') {
+        patients.sort((a, b) => a.name.compareTo(b.name));
+      }
+    });
+  }
+
+  void _viewHistory(Patient patient) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PatientHistoryPage(patient: patient),
+      ),
+    );
+  }
+
+  void _screenNow(Patient patient) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ScreeningPage(patient: patient),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Ensure list is initially sorted according to selectedSort
+    // (optional: you could call _sortPatients() in initState instead)
+    // _sortPatients();
+
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.green.shade50,
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.favorite_border,
-              color: Colors.green,
-              size: 20,
-            ),
-          ),
-        ),
-        title: const Text(
-          'Asha Worker Dashboard',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: false,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.menu, color: Colors.black),
-            onPressed: () {},
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header Row with "Patient Queue" and Sort Dropdown
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Patient Queue',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Patient Queue',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.teal,
                 ),
-                Row(
+              ),
+              const SizedBox(height: 16),
+              Align(
+                alignment: Alignment.centerRight,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text('Sort by:'),
+                    const Text(
+                      'Sort by:',
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 2),
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.shade300),
-                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.teal.shade200),
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.teal.shade50,
                       ),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
                           value: selectedSort,
-                          icon: const Icon(Icons.keyboard_arrow_down),
+                          icon: const Icon(Icons.keyboard_arrow_down,
+                              color: Colors.teal),
+                          style: const TextStyle(
+                              color: Colors.teal, fontSize: 16),
                           items: <String>['Harmony Score', 'Age', 'Name']
                               .map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
@@ -105,118 +169,70 @@ class _AshaWorkerDashboardState extends State<AshaWorkerDashboard> {
                             );
                           }).toList(),
                           onChanged: (String? newValue) {
+                            if (newValue == null) return;
                             setState(() {
-                              selectedSort = newValue!;
+                              selectedSort = newValue;
                             });
+                            _sortPatients();
                           },
                         ),
                       ),
                     ),
                   ],
                 ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            // Risk Cards
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                Flexible(
-                  child: RiskCard(
-                    label: 'High Risk',
-                    count: 5,
-                    color: Colors.red,
-                    icon: Icons.warning_amber,
-                    bgColor: Color(0xFFFFEEEE),
+              ),
+              const SizedBox(height: 24),
+              // Risk cards (kept const as they are static)
+              Row(
+                children: const [
+                  Expanded(
+                    child: RiskCard(
+                      label: 'High Risk',
+                      count: 5,
+                      color: Colors.red,
+                      icon: Icons.warning_amber,
+                      bgColor: Color(0xFFFFEEEE),
+                    ),
                   ),
-                ),
-                SizedBox(width: 8),
-                Flexible(
-                  child: RiskCard(
-                    label: 'Medium Risk',
-                    count: 12,
-                    color: Colors.orange,
-                    icon: Icons.info_outline,
-                    bgColor: Color(0xFFFFF8EE),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: RiskCard(
+                      label: 'Medium Risk',
+                      count: 12,
+                      color: Colors.orange,
+                      icon: Icons.info_outline,
+                      bgColor: Color(0xFFFFF8EE),
+                    ),
                   ),
-                ),
-                SizedBox(width: 8),
-                Flexible(
-                  child: RiskCard(
-                    label: 'Low Risk',
-                    count: 6,
-                    color: Colors.green,
-                    icon: Icons.check_circle_outline,
-                    bgColor: Color(0xFFEEFFF0),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: RiskCard(
+                      label: 'Low Risk',
+                      count: 6,
+                      color: Colors.green,
+                      icon: Icons.check_circle_outline,
+                      bgColor: Color(0xFFEEFFF0),
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            // Patient List
-            Column(
-              children: const [
-                PatientCard(
-                  name: 'Rajesh Kumar',
-                  age: 45,
-                  harmonyScore: 85,
-                  lastScreening: '2025-01-10',
-                  conditions: ['Hypertension', 'Diabetes Risk'],
-                  riskLevel: 'HIGH RISK',
-                  riskColor: Colors.red,
-                ),
-                SizedBox(height: 15),
-                PatientCard(
-                  name: 'Priya Sharma',
-                  age: 32,
-                  harmonyScore: 65,
-                  lastScreening: '2025-01-12',
-                  conditions: ['Oral Health'],
-                  riskLevel: 'MEDIUM RISK',
-                  riskColor: Colors.orange,
-                ),
-                SizedBox(height: 15),
-                PatientCard(
-                  name: 'Amit Patel',
-                  age: 28,
-                  harmonyScore: 35,
-                  lastScreening: '2025-01-15',
-                  conditions: ['Regular Checkup'],
-                  riskLevel: 'LOW RISK',
-                  riskColor: Colors.green,
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+              const SizedBox(height: 24),
+              // Patient list (non-const instances)
+              Column(
+                children: patients.map((patient) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: PatientCard(
+                      patient: patient,
+                      onViewHistory: () => _viewHistory(patient),
+                      onScreenNow: () => _screenNow(patient),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.teal,
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
-        currentIndex: 0,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.emergency),
-            label: 'Emergency',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.school),
-            label: 'Learn',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-        onTap: (index) {
-          // Handle navigation
-        },
       ),
     );
   }
@@ -241,11 +257,19 @@ class RiskCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: bgColor,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: color.withOpacity(0.4)),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -256,22 +280,22 @@ class RiskCard extends StatelessWidget {
                 child: Text(
                   label,
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 14,
                     color: color,
                     fontWeight: FontWeight.w600,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const SizedBox(width: 4),
-              Icon(icon, size: 16, color: color),
+              const SizedBox(width: 8),
+              Icon(icon, size: 20, color: color),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           Text(
             '$count',
             style: TextStyle(
-              fontSize: 24,
+              fontSize: 28,
               fontWeight: FontWeight.bold,
               color: color,
             ),
@@ -282,43 +306,36 @@ class RiskCard extends StatelessWidget {
   }
 }
 
+// NOTE: constructor is intentionally NOT const to avoid hot-reload removal errors
 class PatientCard extends StatelessWidget {
-  final String name;
-  final int age;
-  final int harmonyScore;
-  final String lastScreening;
-  final List<String> conditions;
-  final String riskLevel;
-  final Color riskColor;
+  final Patient patient;
+  final VoidCallback onViewHistory;
+  final VoidCallback onScreenNow;
 
-  const PatientCard({
+  PatientCard({
     super.key,
-    required this.name,
-    required this.age,
-    required this.harmonyScore,
-    required this.lastScreening,
-    required this.conditions,
-    required this.riskLevel,
-    required this.riskColor,
+    required this.patient,
+    required this.onViewHistory,
+    required this.onScreenNow,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
+            color: Colors.grey.withOpacity(0.15),
+            spreadRadius: 2,
+            blurRadius: 8,
+            offset: const Offset(0, 4),
           ),
         ],
-        border: Border.all(color: riskColor.withOpacity(0.4)),
+        border: Border.all(color: patient.riskColor.withOpacity(0.6)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -328,79 +345,141 @@ class PatientCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  name,
+                  patient.name,
                   style: const TextStyle(
-                    fontSize: 18,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
+                    color: Colors.teal,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
-                  color: riskColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(5),
+                  color: patient.riskColor.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  riskLevel,
+                  patient.riskLevel,
                   style: TextStyle(
-                    color: riskColor,
-                    fontSize: 10,
+                    color: patient.riskColor,
+                    fontSize: 11,
                     fontWeight: FontWeight.bold,
+                    letterSpacing: 0.5,
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          Text('Age: $age years', style: TextStyle(color: Colors.grey[600])),
-          Text('Harmony Score: $harmonyScore', style: TextStyle(color: Colors.grey[600])),
-          Text('Last Screening: $lastScreening', style: TextStyle(color: Colors.grey[600])),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
+          Text('Age: ${patient.age} years',
+              style: TextStyle(color: Colors.grey[700], fontSize: 14)),
+          Text('Harmony Score: ${patient.harmonyScore}',
+              style: TextStyle(color: Colors.grey[700], fontSize: 14)),
+          Text('Last Screening: ${patient.lastScreening}',
+              style: TextStyle(color: Colors.grey[700], fontSize: 14)),
+          const SizedBox(height: 16),
           Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: conditions.map((condition) {
+            spacing: 10,
+            runSpacing: 10,
+            children: patient.conditions.map((condition) {
               return Chip(
                 label: Text(condition),
-                backgroundColor: Colors.grey[200],
-                labelStyle: const TextStyle(fontSize: 12),
+                backgroundColor: Colors.teal.shade50,
+                labelStyle:
+                    const TextStyle(fontSize: 13, color: Colors.teal),
+                side: BorderSide(color: Colors.teal.shade200),
               );
             }).toList(),
           ),
-          const Divider(height: 25, thickness: 0.5),
+          const Divider(height: 30, thickness: 1, color: Colors.teal),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               OutlinedButton(
-                onPressed: () {},
+                onPressed: onViewHistory,
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.teal,
-                  side: const BorderSide(color: Colors.teal),
+                  side: const BorderSide(color: Colors.teal, width: 1.5),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(10),
                   ),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 18, vertical: 12),
                 ),
-                child: const Text('View History'),
+                child: const Text('View History',
+                    style: TextStyle(fontSize: 15)),
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 12),
               ElevatedButton.icon(
-                onPressed: () {},
-                icon: const Icon(Icons.qr_code_scanner, size: 18),
-                label: const Text('Screen Now'),
+                onPressed: onScreenNow,
+                icon: const Icon(Icons.qr_code_scanner, size: 20),
+                label:
+                    const Text('Screen Now', style: TextStyle(fontSize: 15)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.teal,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 18, vertical: 12),
                 ),
               ),
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+// Simple Patient History page (keeps UI minimal and informative)
+class PatientHistoryPage extends StatelessWidget {
+  final Patient patient;
+
+  const PatientHistoryPage({super.key, required this.patient});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('${patient.name} - History'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Text(
+          'Showing medical history for ${patient.name}.\n\n'
+          'Age: ${patient.age}\n'
+          'Conditions: ${patient.conditions.join(", ")}\n'
+          'Last Screening: ${patient.lastScreening}',
+          style: const TextStyle(fontSize: 16),
+        ),
+      ),
+    );
+  }
+}
+
+// Simple Screening page (placeholder for screening flow)
+class ScreeningPage extends StatelessWidget {
+  final Patient patient;
+
+  const ScreeningPage({super.key, required this.patient});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Screening - ${patient.name}'),
+      ),
+      body: Center(
+        child: Text(
+          'Starting screening process for ${patient.name}...',
+          style: const TextStyle(fontSize: 18, color: Colors.teal),
+          textAlign: TextAlign.center,
+        ),
       ),
     );
   }

@@ -9,11 +9,16 @@ class LocationNotifierScreen extends StatefulWidget {
   State<LocationNotifierScreen> createState() => _LocationNotifierScreenState();
 }
 
-class _LocationNotifierScreenState extends State<LocationNotifierScreen> {
+class _LocationNotifierScreenState extends State<LocationNotifierScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _fadeIn;
+
   @override
   void initState() {
     super.initState();
 
+    // ⏱ Keep navigation logic unchanged
     Timer(const Duration(seconds: 2), () {
       if (mounted) {
         Navigator.pushReplacement(
@@ -22,111 +27,147 @@ class _LocationNotifierScreenState extends State<LocationNotifierScreen> {
         );
       }
     });
+
+    // ✨ Fade-in animation (same as other screens)
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..forward();
+
+    _fadeIn = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
+    final size = MediaQuery.of(context).size;
 
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          // Centered Title
-          Positioned(
-            top: screenHeight * 0.1,
-            left: 20,
-            right: 20,
-            child: Text(
-              'Location Notifier',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Colors.deepPurple[300],
+          // 🌈 Gradient background
+          Positioned.fill(
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFFEAF2FF),
+                    Color(0xFFDCEBFF),
+                    Colors.white,
+                  ],
+                ),
               ),
             ),
           ),
 
-          // Red Dot Indicator
-          // Positioned(
-          //   top: screenHeight * 0.35,
-          //   left: screenWidth * 0.55,
-          //   child: Container(
-          //     width: 12,
-          //     height: 12,
-          //     decoration: const BoxDecoration(
-          //       color: Colors.red,
-          //       shape: BoxShape.circle,
-          //     ),
-          //   ),
-          // ),
-
-          // Bottom Gradient Section
+          // 🌊 Decorative circular wave
           Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: ClipPath(
-              clipper: _BottomClipper(),
-              child: Container(
-                height: screenHeight * 0.4,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Colors.blue.withOpacity(0.15),
-                      Colors.purple.withOpacity(0.15),
-                    ],
-                  ),
+            bottom: -80,
+            left: -80,
+            child: Container(
+              width: size.width * 1.4,
+              height: size.width * 1.4,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    Color(0xFFB8D8FF),
+                    Colors.transparent,
+                  ],
+                  radius: 0.7,
                 ),
+              ),
+            ),
+          ),
+
+          // 📱 Main content
+          SafeArea(
+            child: FadeTransition(
+              opacity: _fadeIn,
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 20),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Automatically shares your real-time location with trusted contacts during critical times, ensuring they know where you are.',
-                        textAlign: TextAlign.center,
+                      const SizedBox(height: 20),
+
+                      // 🩺 Headline
+                      const Text(
+                        'Location Notifier',
                         style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey[800],
-                          height: 1.5,
+                          fontSize: 34,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.black87,
+                          height: 1.2,
                         ),
                       ),
-                      const SizedBox(height: 30),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: 10,
-                            height: 10,
-                            decoration: BoxDecoration(
-                              color: Colors.purple[800],
-                              shape: BoxShape.circle,
+                      const SizedBox(height: 32),
+
+                      // 📍 Beautiful location icon instead of image
+                      Center(
+                        child: Container(
+                          width: size.width * 0.6,
+                          height: size.width * 0.6,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.blue.shade100,
+                                Colors.purple.shade100,
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.blue.shade200.withOpacity(0.4),
+                                blurRadius: 30,
+                                offset: const Offset(0, 10),
+                              ),
+                            ],
+                          ),
+                          child: Center(
+                            child: Icon(
+                              Icons.location_on_rounded,
+                              size: size.width * 0.3,
+                              color: Colors.deepPurple.shade400,
                             ),
                           ),
-                          const SizedBox(width: 8),
-                          Container(
-                            width: 10,
-                            height: 10,
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.8),
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Container(
-                            width: 10,
-                            height: 10,
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.8),
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                        ],
+                        ),
+                      ),
+                      const SizedBox(height: 40),
+
+                      // 📝 Description
+                      _buildFeatureText(
+                        '📍 Automatically shares your real-time location with trusted contacts during critical times, ensuring they know where you are.',
+                      ),
+                      const SizedBox(height: 20),
+                      _buildFeatureText(
+                        '🛡️ Enhancing safety and peace of mind — because care goes beyond prediction.',
+                      ),
+                      const SizedBox(height: 40),
+
+                      // 🟣 Progress dots (step 3 active)
+                      Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildDot(false),
+                            _buildDot(false),
+                            _buildDot(true),
+                          ],
+                        ),
                       ),
                       const SizedBox(height: 40),
                     ],
@@ -139,20 +180,29 @@ class _LocationNotifierScreenState extends State<LocationNotifierScreen> {
       ),
     );
   }
-}
 
-class _BottomClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    Path path = Path();
-    path.moveTo(0, size.height * 0.25);
-    path.quadraticBezierTo(size.width * 0.5, 0, size.width, size.height * 0.25);
-    path.lineTo(size.width, size.height);
-    path.lineTo(0, size.height);
-    path.close();
-    return path;
+  Widget _buildFeatureText(String text) {
+    return Text(
+      text,
+      style: const TextStyle(
+        fontSize: 18,
+        height: 1.6,
+        color: Colors.black87,
+        fontWeight: FontWeight.w500,
+      ),
+    );
   }
 
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+  Widget _buildDot(bool isActive) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      width: isActive ? 14 : 8,
+      height: 8,
+      decoration: BoxDecoration(
+        color: isActive ? const Color(0xFF1E88E5) : Colors.grey[400],
+        borderRadius: BorderRadius.circular(4),
+      ),
+    );
+  }
 }

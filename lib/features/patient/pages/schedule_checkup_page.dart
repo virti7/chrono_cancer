@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:chronocancer_ai/models.dart'; // Make sure this points to your models.dart
+import 'package:chronocancer_ai/data/appointment_store.dart';
 
 class AppointmentBookingScreen extends StatefulWidget {
   const AppointmentBookingScreen({Key? key}) : super(key: key);
@@ -54,31 +55,46 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
     super.dispose();
   }
 
-  void _bookAppointment() {
-    if (_selectedDoctor != null &&
-        _selectedTime != null &&
-        _purposeController.text.isNotEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-              'Appointment booked with ${_selectedDoctor!.name} on ${DateFormat('yyyy-MM-dd').format(_selectedDay)} at $_selectedTime for ${_purposeController.text}!'),
-          backgroundColor: Colors.green,
+void _bookAppointment() {
+  if (_selectedDoctor != null &&
+      _selectedTime != null &&
+      _purposeController.text.isNotEmpty) {
+    
+    // ✅ Add appointment to global store
+      AppointmentStore().addAppointment(
+        BookedAppointment(
+          patientName: "You",
+          doctor: _selectedDoctor!,
+          date: _selectedDay,
+          time: _selectedTime!,
+          purpose: _purposeController.text,
+          avatarColor: Colors.tealAccent, // <-- assign a color
         ),
       );
-      setState(() {
-        _selectedDoctor = null;
-        _selectedTime = null;
-        _purposeController.clear();
-      });
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please fill all appointment details.'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+            'Appointment booked with ${_selectedDoctor!.name} on ${DateFormat('yyyy-MM-dd').format(_selectedDay)} at $_selectedTime for ${_purposeController.text}!'),
+        backgroundColor: Colors.green,
+      ),
+    );
+    
+    setState(() {
+      _selectedDoctor = null;
+      _selectedTime = null;
+      _purposeController.clear();
+    });
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Please fill all appointment details.'),
+        backgroundColor: Colors.red,
+      ),
+    );
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:chronocancer_ai/features/doctor/pages/analytics_dashboard_page.dart';
 import 'package:chronocancer_ai/features/doctor/pages/prescription_page.dart';
 import 'package:chronocancer_ai/features/doctor/pages/risk_queue_page.dart';
+import 'package:chronocancer_ai/data/appointment_store.dart';
+// import 'package:chronocancer_ai/core/models/' as models;
 // import 'package:fl_chart/fl_chart.dart'; // Uncomment if you use charts
 
 class DoctorHomePage extends StatefulWidget {
@@ -80,27 +82,27 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
     },
   ];
 
-  // Dummy data for Upcoming Appointments
-  final List<Map<String, dynamic>> _upcomingAppointments = [
-    {
-      'patientName': 'Sarah Johnson',
-      'time': '10:00 AM',
-      'type': 'Follow-up',
-      'avatarColor': Colors.deepOrangeAccent,
-    },
-    {
-      'patientName': 'David Lee',
-      'time': '11:30 AM',
-      'type': 'New Patient',
-      'avatarColor': Colors.tealAccent,
-    },
-    {
-      'patientName': 'Jessica Chen',
-      'time': '02:00 PM',
-      'type': 'Consultation',
-      'avatarColor': Colors.pinkAccent,
-    },
-  ];
+  // // Dummy data for Upcoming Appointments
+  // final List<Map<String, dynamic>> _upcomingAppointments = [
+  //   {
+  //     'patientName': 'Sarah Johnson',
+  //     'time': '10:00 AM',
+  //     'type': 'Follow-up',
+  //     'avatarColor': Colors.deepOrangeAccent,
+  //   },
+  //   {
+  //     'patientName': 'David Lee',
+  //     'time': '11:30 AM',
+  //     'type': 'New Patient',
+  //     'avatarColor': Colors.tealAccent,
+  //   },
+  //   {
+  //     'patientName': 'Jessica Chen',
+  //     'time': '02:00 PM',
+  //     'type': 'Consultation',
+  //     'avatarColor': Colors.pinkAccent,
+  //   },
+  // ];
 
   @override
   Widget build(BuildContext context) {
@@ -334,33 +336,88 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
     );
   }
 
-  Widget _buildUpcomingAppointmentsSection() {
-    return Column(
+Widget _buildAppointmentCardFromModel(BookedAppointment appointment) {
+  return Container(
+    width: 180,
+    margin: const EdgeInsets.only(right: 15),
+    padding: const EdgeInsets.all(12.0),
+    decoration: BoxDecoration(
+      color: cardColor,
+      borderRadius: BorderRadius.circular(15),
+      border: Border.all(color: Colors.grey.shade200),
+    ),
+    child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Upcoming Appointments',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
+        Row(
+          children: [
+            CircleAvatar(
+              radius: 15,
+              backgroundColor: appointment.avatarColor,
+              child: Text(
+                appointment.patientName[0],
+                style: const TextStyle(color: Colors.white, fontSize: 12),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                appointment.patientName,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 10),
-        Container(
-          height: 120,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: _upcomingAppointments.length,
-            itemBuilder: (context, index) {
-              final appointment = _upcomingAppointments[index];
-              return _buildAppointmentCard(appointment);
-            },
-          ),
+        Text(
+          appointment.time,
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: primaryBlue),
+        ),
+        const SizedBox(height: 5),
+        Text(
+          appointment.purpose,
+          style: TextStyle(fontSize: 12, color: greyText),
         ),
       ],
-    );
-  }
+    ),
+  );
+}
+
+
+Widget _buildUpcomingAppointmentsSection() {
+  final appointments = AppointmentStore().appointments; // get from store
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        'Upcoming Appointments',
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+        ),
+      ),
+      const SizedBox(height: 10),
+      Container(
+        height: 120,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: appointments.length,
+          itemBuilder: (context, index) {
+            final appointment = appointments[index];
+            return _buildAppointmentCardFromModel(appointment);
+          },
+        ),
+      ),
+    ],
+  );
+}
+
 
   Widget _buildAppointmentCard(Map<String, dynamic> appointment) {
     return Container(

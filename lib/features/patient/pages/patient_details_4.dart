@@ -1,3 +1,4 @@
+// patient_details_4.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'patient_data.dart';
@@ -18,9 +19,8 @@ class _PatientDetails4State extends State<PatientDetails4> {
   void _saveAndNext(PatientData patientData) async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      patientData.update(); // Notify listeners
+      patientData.update();
 
-      // Prepare data for Firestore
       final data = {
         "has_diabetes": patientData.hasDiabetes,
         "diabetes_type": patientData.diabetesType,
@@ -66,213 +66,265 @@ class _PatientDetails4State extends State<PatientDetails4> {
     return Consumer<PatientData>(
       builder: (context, patientData, child) {
         return Scaffold(
+          backgroundColor: const Color(0xFFF0F5F9),
           appBar: AppBar(
-            title: const Text('Chronic Diseases'),
-            backgroundColor: Colors.white,
-            foregroundColor: Colors.black,
+            automaticallyImplyLeading: false, // ✅ Fix double arrow
+            toolbarHeight: 80,
             elevation: 0,
+            backgroundColor: Colors.transparent,
             centerTitle: true,
-          ),
-          body: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.blue.shade50, Colors.green.shade50],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
-            child: Form(
-              key: _formKey,
-              child: ListView(
-                padding: const EdgeInsets.all(16),
-                children: [
-                  _buildProgressBar(4, 6),
-
-                  const SizedBox(height: 20),
-
-                  // -------------------- METABOLIC CONDITIONS --------------------
-                  _buildExpandableCard(
-                    title: 'Metabolic Conditions',
-                    children: [
-                      _buildCheckboxTile(
-                        label: 'Diabetes',
-                        value: patientData.hasDiabetes,
-                        onChanged: (val) =>
-                            setState(() => patientData.hasDiabetes = val),
-                      ),
-                      if (patientData.hasDiabetes)
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildDropdownField(
-                              label: 'Type',
-                              value: patientData.diabetesType,
-                              options: ['Type 1', 'Type 2', 'Gestational', 'Prediabetes'],
-                              onChanged: (val) => patientData.diabetesType = val,
-                            ),
-                            _buildNumberField(
-                              label: 'Years with diabetes',
-                              value: patientData.diabetesDurationYears?.toDouble() ?? 0,
-                              min: 0,
-                              max: 50,
-                              onChanged: (val) => patientData.diabetesDurationYears = val.toInt(),
-                            ),
-                            _buildNumberField(
-                              label: 'Latest HbA1c',
-                              value: patientData.hba1cLatest ?? 6.0,
-                              min: 4,
-                              max: 14,
-                              onChanged: (val) => patientData.hba1cLatest = val,
-                            ),
-                            _buildNumberField(
-                              label: 'Fasting glucose (mg/dL)',
-                              value: patientData.fastingGlucose?.toDouble() ?? 90,
-                              min: 50,
-                              max: 400,
-                              onChanged: (val) => patientData.fastingGlucose = val.toInt(),
-                            ),
-                            _buildChoiceChips(
-                              label: 'Control level',
-                              options: ['Well-controlled', 'Moderately', 'Poorly'],
-                              selectedOption: patientData.diabetesControlled ?? 'Well-controlled',
-                              onSelected: (val) => patientData.diabetesControlled = val,
-                            ),
-                            _buildMultiSelectField(
-                              label: 'Medications',
-                              options: ['Metformin', 'Insulin', 'Sulfonylureas', 'GLP-1', 'SGLT2 inhibitors'],
-                              selectedOptions: patientData.diabetesMedications,
-                              onChanged: (list) => patientData.diabetesMedications = list,
-                            ),
-                          ],
-                        ),
-                      _buildCheckboxTile(
-                        label: 'Obesity / Metabolic Syndrome',
-                        value: patientData.metabolicSyndromeDiagnosed,
-                        onChanged: (val) => setState(() => patientData.metabolicSyndromeDiagnosed = val),
-                      ),
-                      if (patientData.metabolicSyndromeDiagnosed)
-                        _buildNumberField(
-                          label: 'Waist Circumference (cm)',
-                          value: patientData.waistCircumference?.toDouble() ?? 80,
-                          min: 50,
-                          max: 200,
-                          onChanged: (val) => patientData.waistCircumference = val.toInt(),
-                        ),
-                      _buildCheckboxTile(
-                        label: 'Hypertension',
-                        value: patientData.hasHypertension,
-                        onChanged: (val) => setState(() => patientData.hasHypertension = val),
-                      ),
-                      if (patientData.hasHypertension)
-                        Column(
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: _buildNumberField(
-                                    label: 'Systolic BP',
-                                    value: patientData.bpSystolicUsual?.toDouble() ?? 120,
-                                    min: 80,
-                                    max: 250,
-                                    onChanged: (val) => patientData.bpSystolicUsual = val.toInt(),
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: _buildNumberField(
-                                    label: 'Diastolic BP',
-                                    value: patientData.bpDiastolicUsual?.toDouble() ?? 80,
-                                    min: 40,
-                                    max: 150,
-                                    onChanged: (val) => patientData.bpDiastolicUsual = val.toInt(),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            _buildChoiceChips(
-                              label: 'Control level',
-                              options: ['Well', 'Moderately', 'Poorly'],
-                              selectedOption: patientData.hypertensionControlled ?? 'Well',
-                              onSelected: (val) => patientData.hypertensionControlled = val,
-                            ),
-                            _buildMultiSelectField(
-                              label: 'Medications',
-                              options: ['ACE inhibitors', 'ARBs', 'Beta-blockers', 'Calcium blockers', 'Diuretics'],
-                              selectedOptions: patientData.bpMedications,
-                              onChanged: (list) => patientData.bpMedications = list,
-                            ),
-                          ],
-                        ),
-                    ],
-                  ),
-
-                  // -------------------- RESPIRATORY CONDITIONS --------------------
-                  _buildExpandableCard(
-                    title: 'Respiratory Conditions',
-                    children: [
-                      _buildCheckboxTile(
-                        label: 'COPD / Chronic Bronchitis',
-                        value: patientData.hasCopd,
-                        onChanged: (val) => setState(() => patientData.hasCopd = val),
-                      ),
-                      if (patientData.hasCopd)
-                        _buildDropdownField(
-                          label: 'Severity',
-                          value: patientData.copdSeverity,
-                          options: ['Mild', 'Moderate', 'Severe'],
-                          onChanged: (val) => patientData.copdSeverity = val,
-                        ),
-                      _buildNumberField(
-                        label: 'Chronic Cough Duration (weeks)',
-                        value: double.tryParse(patientData.chronicCoughDuration ?? '0') ?? 0,
-                        min: 0,
-                        max: 520,
-                        onChanged: (val) => patientData.chronicCoughDuration = val.toInt().toString(),
-                      ),
-                      _buildCheckboxTile(
-                        label: 'Asthma',
-                        value: patientData.hasAsthma,
-                        onChanged: (val) => setState(() => patientData.hasAsthma = val),
-                      ),
-                      if (patientData.hasAsthma)
-                        _buildDropdownField(
-                          label: 'Severity',
-                          value: patientData.asthmaSeverity,
-                          options: ['Mild', 'Moderate', 'Severe'],
-                          onChanged: (val) => patientData.asthmaSeverity = val,
-                        ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 30),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: _goBack,
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: const Color(0xFF2563eb),
-                            side: const BorderSide(color: Color(0xFF2563eb)),
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                          ),
-                          child: const Text('Go Back', style: TextStyle(fontSize: 18)),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () => _saveAndNext(patientData),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF2563eb),
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                          ),
-                          child: const Text('Next', style: TextStyle(fontSize: 18, color: Colors.white)),
-                        ),
-                      ),
-                    ],
+            flexibleSpace: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.indigo.shade500, Colors.blue.shade600],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: const BorderRadius.vertical(bottom: Radius.circular(25)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.blue.shade200.withOpacity(0.4),
+                    spreadRadius: 2,
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
                   ),
                 ],
               ),
+              child: SafeArea(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Row(
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.arrow_back_ios_new_rounded,
+                                color: Colors.white, size: 24),
+                            onPressed: _goBack,
+                          ),
+                          Expanded(
+                            child: Center(
+                              child: Text(
+                                'Chronic Diseases',
+                                style: const TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  letterSpacing: 0.8,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const Opacity(
+                            opacity: 0.0,
+                            child: Icon(Icons.arrow_back_ios_new_rounded, size: 24),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Text(
+                      'Patient Onboarding',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white.withOpacity(0.8),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          // ---------------- Body ----------------
+          body: Form(
+            key: _formKey,
+            child: ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
+              children: [
+                _buildProgressBar(4, 6),
+                const SizedBox(height: 30),
+
+                _buildSectionCard(
+                  title: 'Metabolic Conditions',
+                  icon: Icons.bloodtype_outlined,
+                  children: [
+                    _buildCheckboxTile(
+                      'Diabetes',
+                      patientData.hasDiabetes,
+                      (val) => setState(() => patientData.hasDiabetes = val),
+                    ),
+                    if (patientData.hasDiabetes)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildDropdownField(
+                            'Type',
+                            patientData.diabetesType,
+                            ['Type 1', 'Type 2', 'Gestational', 'Prediabetes'],
+                            (val) => patientData.diabetesType = val,
+                          ),
+                          _buildNumberField(
+                            'Years with diabetes',
+                            patientData.diabetesDurationYears?.toDouble() ?? 0,
+                            0,
+                            50,
+                            (val) => patientData.diabetesDurationYears = val.toInt(),
+                          ),
+                          _buildNumberField(
+                            'Latest HbA1c',
+                            patientData.hba1cLatest ?? 6.0,
+                            4,
+                            14,
+                            (val) => patientData.hba1cLatest = val,
+                          ),
+                          _buildNumberField(
+                            'Fasting glucose (mg/dL)',
+                            patientData.fastingGlucose?.toDouble() ?? 90,
+                            50,
+                            400,
+                            (val) => patientData.fastingGlucose = val.toInt(),
+                          ),
+                          _buildChoiceChips(
+                            'Control level',
+                            ['Well-controlled', 'Moderately', 'Poorly'],
+                            patientData.diabetesControlled ?? 'Well-controlled',
+                            (val) => patientData.diabetesControlled = val,
+                          ),
+                          _buildMultiSelectField(
+                            'Medications',
+                            [
+                              'Metformin',
+                              'Insulin',
+                              'Sulfonylureas',
+                              'GLP-1',
+                              'SGLT2 inhibitors'
+                            ],
+                            patientData.diabetesMedications,
+                            (list) => patientData.diabetesMedications = list,
+                          ),
+                        ],
+                      ),
+                    _buildCheckboxTile(
+                      'Obesity / Metabolic Syndrome',
+                      patientData.metabolicSyndromeDiagnosed,
+                      (val) =>
+                          setState(() => patientData.metabolicSyndromeDiagnosed = val),
+                    ),
+                    if (patientData.metabolicSyndromeDiagnosed)
+                      _buildNumberField(
+                        'Waist Circumference (cm)',
+                        patientData.waistCircumference?.toDouble() ?? 80,
+                        50,
+                        200,
+                        (val) => patientData.waistCircumference = val.toInt(),
+                      ),
+                    _buildCheckboxTile(
+                      'Hypertension',
+                      patientData.hasHypertension,
+                      (val) => setState(() => patientData.hasHypertension = val),
+                    ),
+                    if (patientData.hasHypertension)
+                      Column(
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _buildNumberField(
+                                  'Systolic BP',
+                                  patientData.bpSystolicUsual?.toDouble() ?? 120,
+                                  80,
+                                  250,
+                                  (val) => patientData.bpSystolicUsual = val.toInt(),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: _buildNumberField(
+                                  'Diastolic BP',
+                                  patientData.bpDiastolicUsual?.toDouble() ?? 80,
+                                  40,
+                                  150,
+                                  (val) => patientData.bpDiastolicUsual = val.toInt(),
+                                ),
+                              ),
+                            ],
+                          ),
+                          _buildChoiceChips(
+                            'Control level',
+                            ['Well', 'Moderately', 'Poorly'],
+                            patientData.hypertensionControlled ?? 'Well',
+                            (val) => patientData.hypertensionControlled = val,
+                          ),
+                          _buildMultiSelectField(
+                            'Medications',
+                            [
+                              'ACE inhibitors',
+                              'ARBs',
+                              'Beta-blockers',
+                              'Calcium blockers',
+                              'Diuretics'
+                            ],
+                            patientData.bpMedications,
+                            (list) => patientData.bpMedications = list,
+                          ),
+                        ],
+                      ),
+                  ],
+                ),
+
+                const SizedBox(height: 30),
+                _buildSectionCard(
+                  title: 'Respiratory Conditions',
+                  icon: Icons.air_outlined,
+                  children: [
+                    _buildCheckboxTile(
+                      'COPD / Chronic Bronchitis',
+                      patientData.hasCopd,
+                      (val) => setState(() => patientData.hasCopd = val),
+                    ),
+                    if (patientData.hasCopd)
+                      _buildDropdownField(
+                        'Severity',
+                        patientData.copdSeverity,
+                        ['Mild', 'Moderate', 'Severe'],
+                        (val) => patientData.copdSeverity = val,
+                      ),
+                    _buildNumberField(
+                      'Chronic Cough Duration (weeks)',
+                      double.tryParse(patientData.chronicCoughDuration ?? '0') ?? 0,
+                      0,
+                      520,
+                      (val) =>
+                          patientData.chronicCoughDuration = val.toInt().toString(),
+                    ),
+                    _buildCheckboxTile(
+                      'Asthma',
+                      patientData.hasAsthma,
+                      (val) => setState(() => patientData.hasAsthma = val),
+                    ),
+                    if (patientData.hasAsthma)
+                      _buildDropdownField(
+                        'Severity',
+                        patientData.asthmaSeverity,
+                        ['Mild', 'Moderate', 'Severe'],
+                        (val) => patientData.asthmaSeverity = val,
+                      ),
+                  ],
+                ),
+
+                const SizedBox(height: 50),
+                Row(
+                  children: [
+                    Expanded(child: _buildBackButton()),
+                    const SizedBox(width: 20),
+                    Expanded(
+                      child: _buildNextButton(() => _saveAndNext(patientData)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+              ],
             ),
           ),
         );
@@ -280,51 +332,86 @@ class _PatientDetails4State extends State<PatientDetails4> {
     );
   }
 
-  // -------------------- UI HELPERS --------------------
+  // -------------------- STYLIZED UI HELPERS --------------------
   Widget _buildProgressBar(int step, int total) {
     return Column(
       children: [
-        Text('Step $step of $total', style: TextStyle(fontSize: 14, color: Colors.grey.shade700)),
-        const SizedBox(height: 8),
-        LinearProgressIndicator(
-          value: step / total,
-          minHeight: 8,
-          backgroundColor: Colors.grey.shade300,
-          color: const Color(0xFF2563eb),
+        Text(
+          'Progress: $step of $total steps',
+          style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.indigo.shade700),
+        ),
+        const SizedBox(height: 12),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: LinearProgressIndicator(
+            value: step / total,
+            backgroundColor: const Color(0xFFD6E0E6),
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.green.shade400),
+            minHeight: 12,
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildExpandableCard({required String title, required List<Widget> children}) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-          const Divider(height: 20),
+  Widget _buildSectionCard({
+    required String title,
+    required IconData icon,
+    required List<Widget> children,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(25),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.shade200,
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, color: Colors.blue.shade700, size: 28),
+              const SizedBox(width: 12),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue.shade800,
+                ),
+              ),
+            ],
+          ),
+          const Divider(height: 30, thickness: 1, color: Color(0xFFE0E6EE)),
           ...children,
-        ]),
+        ],
       ),
     );
   }
 
-  Widget _buildCheckboxTile({required String label, required bool value, required ValueChanged<bool> onChanged}) {
+  Widget _buildCheckboxTile(String label, bool value, ValueChanged<bool> onChanged) {
     return CheckboxListTile(
-      title: Text(label),
+      title: Text(label, style: const TextStyle(fontSize: 16)),
       value: value,
-      onChanged: (val) {
-        if (val != null) onChanged(val);
-      },
+      onChanged: (val) => onChanged(val ?? false),
       controlAffinity: ListTileControlAffinity.leading,
-      activeColor: const Color(0xFF10b981),
+      activeColor: Colors.green.shade600,
       contentPadding: EdgeInsets.zero,
     );
   }
 
-  Widget _buildNumberField({required String label, required double value, required double min, required double max, required ValueChanged<double> onChanged}) {
+  Widget _buildNumberField(
+      String label, double value, double min, double max, ValueChanged<double> onChanged) {
     return TextFormField(
       initialValue: value.toString(),
       decoration: InputDecoration(labelText: label),
@@ -341,7 +428,8 @@ class _PatientDetails4State extends State<PatientDetails4> {
     );
   }
 
-  Widget _buildDropdownField({required String label, required String? value, required List<String> options, required ValueChanged<String> onChanged}) {
+  Widget _buildDropdownField(
+      String label, String? value, List<String> options, ValueChanged<String> onChanged) {
     return DropdownButtonFormField<String>(
       value: value,
       decoration: InputDecoration(labelText: label),
@@ -352,12 +440,13 @@ class _PatientDetails4State extends State<PatientDetails4> {
     );
   }
 
-  Widget _buildChoiceChips({required String label, required List<String> options, required String selectedOption, required ValueChanged<String> onSelected}) {
+  Widget _buildChoiceChips(String label, List<String> options,
+      String selectedOption, ValueChanged<String> onSelected) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label),
-        const SizedBox(height: 4),
+        Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
+        const SizedBox(height: 6),
         Wrap(
           spacing: 8,
           children: options.map((o) {
@@ -365,6 +454,7 @@ class _PatientDetails4State extends State<PatientDetails4> {
               label: Text(o),
               selected: selectedOption == o,
               onSelected: (_) => onSelected(o),
+              selectedColor: Colors.green.shade200,
             );
           }).toList(),
         ),
@@ -372,16 +462,20 @@ class _PatientDetails4State extends State<PatientDetails4> {
     );
   }
 
-  Widget _buildMultiSelectField({required String label, required List<String> options, required List<String> selectedOptions, required ValueChanged<List<String>> onChanged}) {
+  Widget _buildMultiSelectField(
+      String label,
+      List<String> options,
+      List<String> selectedOptions,
+      ValueChanged<List<String>> onChanged) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label),
-        const SizedBox(height: 4),
+        Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
+        const SizedBox(height: 6),
         Wrap(
           spacing: 8,
           children: options.map((o) {
-            bool selected = selectedOptions.contains(o);
+            final selected = selectedOptions.contains(o);
             return FilterChip(
               label: Text(o),
               selected: selected,
@@ -395,10 +489,87 @@ class _PatientDetails4State extends State<PatientDetails4> {
                   onChanged(selectedOptions);
                 });
               },
+              selectedColor: Colors.green.shade200,
             );
           }).toList(),
         ),
       ],
+    );
+  }
+
+  Widget _buildNextButton(VoidCallback onPressed) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(18),
+        gradient: LinearGradient(
+          colors: [Colors.green.shade500, Colors.teal.shade500],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+        ),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(18),
+          child: const Padding(
+            padding: EdgeInsets.symmetric(vertical: 18),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 24),
+                SizedBox(width: 10),
+                Text(
+                  'Next Step',
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      letterSpacing: 0.5),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBackButton() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(18),
+        gradient: LinearGradient(
+          colors: [Colors.grey.shade400, Colors.grey.shade600],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+        ),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: _goBack,
+          borderRadius: BorderRadius.circular(18),
+          child: const Padding(
+            padding: EdgeInsets.symmetric(vertical: 18),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.arrow_back_rounded, color: Colors.white, size: 24),
+                SizedBox(width: 10),
+                Text(
+                  'Back',
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      letterSpacing: 0.5),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
